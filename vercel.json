@@ -1,0 +1,8 @@
+{
+  "buildCommand": "npm run build",
+  "outputDirectory": "dist",
+  "framework": "vite",
+  "env": {
+    "CMC_API_KEY": "c27e300eac7d4abcb513b028a217e2d5"
+  }
+}
