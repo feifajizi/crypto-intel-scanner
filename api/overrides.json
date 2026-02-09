@@ -1,0 +1,4 @@
+{
+  "_comment": "Manual overrides for official links. Key format: <network>:<token_address_lowercase>. Example: base:0x...",
+  "overrides": {}
+}

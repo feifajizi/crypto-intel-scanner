@@ -218,14 +218,15 @@ export const gateService = {
 };
 
 // ============================================
-// CoinMarketCap API 服务
+// Gate 新上币种（现货+合约）服务
 // ============================================
-export const coinGeckoService = {
-  // 获取最新上架的币种（通过 Vercel Serverless Function 调用 CoinMarketCap API）
-  async getCoinsMarkets(limit: number = 100): Promise<Coin[]> {
+export const gateLatestService = {
+  // 获取 Gate 新上币种（通过 Vercel Serverless Function）
+  // 保守策略：链接补全只有在 CoinGecko “symbol+name 唯一精确匹配”时才会返回，否则留空。
+  async getCoinsMarkets(limit: number = 100, enrichLinks: boolean = true): Promise<Coin[]> {
     try {
-      const url = `/api/cmc-latest?limit=${limit}`;
-      
+      const url = `/api/gate-latest?limit=${limit}&enrich=${enrichLinks ? 1 : 0}`;
+
       const response = await fetch(url, {
         method: 'GET',
         headers: {
@@ -234,72 +235,24 @@ export const coinGeckoService = {
       });
 
       if (!response.ok) {
-        throw new Error(`CoinMarketCap API error: ${response.status}`);
+        throw new Error(`Gate latest API error: ${response.status}`);
       }
 
       const result = await response.json();
-      const data = result.data || [];
-      
-      return data.map((coin: any) => ({
-        id: coin.slug || coin.symbol.toLowerCase(),
-        symbol: coin.symbol,
-        name: coin.name,
-        image: `https://s2.coinmarketcap.com/static/img/coins/64x64/${coin.id}.png`,
-        current_price: coin.quote?.USD?.price || 0,
-        market_cap: coin.quote?.USD?.market_cap || 0,
-        total_volume: coin.quote?.USD?.volume_24h || 0,
-        price_change_percentage_24h: coin.quote?.USD?.percent_change_24h || 0,
-        listed_at: coin.date_added ? coin.date_added.split('T')[0] : undefined,
-      }));
+      return result.data || [];
     } catch (error) {
-      console.error('Error fetching latest tokens from CoinMarketCap:', error);
+      console.error('Error fetching latest tokens from Gate:', error);
       throw error;
     }
   },
 
-  // 获取币种详细信息（包括links）
-  async getCoinDetails(coinId: string): Promise<{
-    symbol: string;
-    name: string;
-    homepage: string;
-    twitter_screen_name: string;
-  } | null> {
-    try {
-      const url = `https://api.coingecko.com/api/v3/coins/${coinId}?localization=false&tickers=false&market_data=false&community_data=false&developer_data=false&sparkline=false`;
-      
-      const response = await fetch(url, {
-        method: 'GET',
-        headers: {
-          'Accept': 'application/json',
-        },
-      });
-
-      if (!response.ok) {
-        return null;
-      }
-
-      const data = await response.json();
-      const links = data.links || {};
-      
-      return {
-        symbol: data.symbol?.toUpperCase() || '',
-        name: data.name || '',
-        homepage: links.homepage?.[0] || '',
-        twitter_screen_name: links.twitter_screen_name || '',
-      };
-    } catch (error) {
-      console.error(`Error fetching coin details for ${coinId}:`, error);
-      return null;
-    }
-  },
-
-  // 搜索币种
+  // 搜索币种：在最新列表里本地搜
   async searchCoins(query: string): Promise<Coin[]> {
     try {
-      const allCoins = await this.getCoinsMarkets(250);
+      const allCoins = await this.getCoinsMarkets(250, false);
       const lowerQuery = query.toLowerCase();
-      
-      return allCoins.filter(coin => 
+
+      return allCoins.filter(coin =>
         coin.symbol.toLowerCase().includes(lowerQuery) ||
         coin.name.toLowerCase().includes(lowerQuery)
       ).slice(0, 20);
@@ -314,37 +267,21 @@ export const coinGeckoService = {
 // 综合数据服务
 // ============================================
 export const dataService = {
-  // 获取币种完整信息（包括links）
+  // 获取币种完整信息（包括官网 / Twitter / tags）
   async getCoinsWithDetails(limit: number = 100): Promise<Coin[]> {
     try {
-      // 获取市场数据
-      const markets = await coinGeckoService.getCoinsMarkets(limit);
-      
-      // 获取每个币种的详细信息（包括links）
-      const coinsWithDetails = await Promise.all(
-        markets.map(async (coin) => {
-          try {
-            const details = await coinGeckoService.getCoinDetails(coin.id);
-            
-            if (details) {
-              return {
-                ...coin,
-                homepage: details.homepage,
-                twitter_screen_name: details.twitter_screen_name,
-              };
-            }
-          } catch (err) {
-            console.warn(`Failed to get details for ${coin.id}:`, err);
-          }
-          
-          return coin;
-        })
-      );
-      
-      return coinsWithDetails;
+      return await gateLatestService.getCoinsMarkets(limit, true);
     } catch (error) {
       console.error('Error fetching coins with details:', error);
       throw error;
     }
+  },
+
+  // 扫描官网是否存在 staking/earn 等信号（保守，best-effort）
+  async scanStake(homepage: string, maxPages: number = 8): Promise<any> {
+    const url = `/api/stake-scan?homepage=${encodeURIComponent(homepage)}&maxPages=${maxPages}`;
+    const resp = await fetch(url, { method: 'GET', headers: { 'Accept': 'application/json' } });
+    if (!resp.ok) throw new Error(`stake-scan error: ${resp.status}`);
+    return await resp.json();
   }
 };

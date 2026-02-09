@@ -1,20 +1,31 @@
 // 币种数据类型
 export interface Coin {
+  // 通用 id（当前实现为 symbol.toLowerCase()）
   id: string;
+
   symbol: string;
   name: string;
-  image: string;
+  image?: string;
   current_price: number;
   market_cap: number;
   total_volume: number;
   price_change_percentage_24h: number;
+
+  // tags（用于过滤 meme / rwa / tokenized-stock 等；当前 Gate 来源默认空数组）
+  tags?: string[];
+
   sparkline_in_7d?: {
     price: number[];
   };
   listed_at?: string;
+
   // 额外字段
   homepage?: string;
   twitter_screen_name?: string;
+
+  // 合约信息（用于人工 override / 校验）
+  token_network?: string;
+  token_address?: string;
 }
 
 // Merkl奖励数据类型

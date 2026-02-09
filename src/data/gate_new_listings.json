@@ -1,0 +1,88 @@
+{
+  "generated_at": "2026-02-09T02:39:52.128Z",
+  "total_coins": 9,
+  "new_coins_added": 9,
+  "coins": [
+    {
+      "symbol": "RNBW",
+      "name": "Rainbow",
+      "homepage": "https://rainbow.me/",
+      "twitter": null,
+      "listed_at": "2026-02-05",
+      "current_price": 0.03398,
+      "total_volume": 1058976.331251
+    },
+    {
+      "symbol": "DOGELONMARS",
+      "name": "Dogelon Mars",
+      "homepage": "https://dogelonmars.com/",
+      "twitter": null,
+      "listed_at": "2026-02-03",
+      "current_price": 3.423e-8,
+      "total_volume": 23846.64503264518
+    },
+    {
+      "symbol": "BIRB",
+      "name": "Moonbirds",
+      "homepage": "https://moonbirds.com/",
+      "twitter": "https://x.com/moonbirds/status/2011438210207883605?s=20",
+      "listed_at": "2026-02-03",
+      "current_price": 0.2497,
+      "total_volume": 3633072.53083
+    },
+    {
+      "symbol": "TRIA",
+      "name": "TRIA",
+      "homepage": null,
+      "twitter": null,
+      "listed_at": "2026-02-03",
+      "current_price": 0.017292,
+      "total_volume": 1020077
+    },
+    {
+      "symbol": "ZAMA",
+      "name": "Zama",
+      "homepage": "https://www.zama.org/",
+      "twitter": null,
+      "listed_at": "2026-02-02",
+      "current_price": 0.02785,
+      "total_volume": 1214294.00355
+    },
+    {
+      "symbol": "BULLA",
+      "name": "BULLA",
+      "homepage": null,
+      "twitter": null,
+      "listed_at": "2026-02-01",
+      "current_price": 0.0237,
+      "total_volume": 5141677
+    },
+    {
+      "symbol": "INX",
+      "name": "Infinex",
+      "homepage": "https://infinex.xyz/",
+      "twitter": null,
+      "listed_at": "2026-01-31",
+      "current_price": 0.01165,
+      "total_volume": 482508.54446
+    },
+    {
+      "symbol": "3KDS",
+      "name": "3KDS",
+      "homepage": "https://3kds.io",
+      "twitter": null,
+      "listed_at": "2026-01-27",
+      "current_price": 0.002144,
+      "total_volume": 78258.280958
+    },
+    {
+      "symbol": "BTGOON",
+      "name": "BitGo Holdings Ondo Tokenized",
+      "homepage": "https://ondo.finance/",
+      "twitter": null,
+      "listed_at": "2026-01-26",
+      "current_price": 11.594,
+      "total_volume": 9640.25548
+    }
+  ]
+}

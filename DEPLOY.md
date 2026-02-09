@@ -29,17 +29,15 @@
 
 ## 🔑 环境变量（可选）
 
-如果想隐藏 API Key，在 Vercel 项目设置里添加：
-- `CMC_API_KEY` = `c27e300eac7d4abcb513b028a217e2d5`
+当前实现不需要 CoinMarketCap Key。
 
-然后从 `vercel.json` 里删掉明文 API Key。
+如果你想进一步提升 CoinGecko 的稳定性（更少限流/更快），可以未来接入 CoinGecko Pro，再加对应环境变量（当前未用到）。
 
 ## 📊 维护
 
 **基本不需要维护**：
-- ✅ 数据自动更新
+- ✅ 数据自动更新（Gate 公共 API）
 - ✅ 服务器自动运维
-- ⚠️ 注意 CoinMarketCap 免费版限制：10,000 次/月
 
 ## 🔄 更新代码
 

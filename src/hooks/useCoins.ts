@@ -1,6 +1,6 @@
 import { useState, useEffect, useCallback } from 'react';
 import type { Coin } from '@/types';
-import { dataService, coinGeckoService } from '@/services/api';
+import { dataService, gateLatestService } from '@/services/api';
 
 export function useCoins(limit: number = 100) {
   const [coins, setCoins] = useState<Coin[]>([]);
@@ -50,7 +50,7 @@ export function useCoinSearch(query: string) {
 
       try {
         setLoading(true);
-        const data = await coinGeckoService.searchCoins(query);
+        const data = await gateLatestService.searchCoins(query);
         setResults(data);
       } catch (err) {
         console.error('Search error:', err);
