@@ -59,7 +59,7 @@ export function TwitterMonitor() {
     return totalChars > 0 && (englishChars / totalChars) > 0.5;
   };
 
-  // Translate text using API
+  // Translate text using free Google Translate API
   const translateText = async (tweetId: string, text: string) => {
     // Check cache first
     if (translations[tweetId]) {
@@ -74,18 +74,42 @@ export function TwitterMonitor() {
     try {
       setTranslating(prev => new Set(prev).add(tweetId));
 
-      const response = await fetch(`/api/translate.js?text=${encodeURIComponent(text)}`);
-      const data = await response.json();
+      // Use Google Translate unofficial API (free, no API key required)
+      const url = `https://translate.googleapis.com/translate_a/single?client=gtx&sl=en&tl=zh-CN&dt=t&q=${encodeURIComponent(text)}`;
+      
+      const response = await fetch(url, {
+        method: 'GET',
+        headers: {
+          'Accept': 'application/json',
+        },
+      });
 
-      if (data.translation && data.translation !== text) {
-        setTranslations(prev => ({
-          ...prev,
-          [tweetId]: data.translation
-        }));
+      if (!response.ok) {
+        throw new Error(`Translation failed: ${response.status}`);
+      }
+
+      const data = await response.json();
+      
+      // Google Translate API 返回格式: [[[translated_text, original_text, ...]]]
+      // 提取所有翻译片段并拼接
+      if (data && data[0]) {
+        const translatedParts = data[0]
+          .filter((item: any) => item && item[0])
+          .map((item: any) => item[0]);
+        
+        const translation = translatedParts.join('');
+        
+        if (translation && translation !== text) {
+          setTranslations(prev => ({
+            ...prev,
+            [tweetId]: translation
+          }));
+        }
       }
     } catch (err) {
       console.error('Translation failed:', err);
-      // Silent fail - just don't show translation
+      // Graceful degradation: just don't show translation
+      // User will still see original text
     } finally {
       setTranslating(prev => {
         const next = new Set(prev);
@@ -108,11 +132,14 @@ export function TwitterMonitor() {
       const jsonData = await response.json();
       setData(jsonData);
 
-      // Auto-translate English tweets
+      // Auto-translate English tweets with rate limiting
       if (jsonData.tweets) {
-        jsonData.tweets.forEach((tweet: Tweet) => {
+        jsonData.tweets.forEach((tweet: Tweet, index: number) => {
           if (isEnglish(tweet.text)) {
-            translateText(tweet.id, tweet.text);
+            // Add delay between requests to avoid rate limiting (300ms per tweet)
+            setTimeout(() => {
+              translateText(tweet.id, tweet.text);
+            }, index * 300);
           }
         });
       }
