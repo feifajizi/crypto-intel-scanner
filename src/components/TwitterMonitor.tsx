@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import { ExternalLink, Loader2, RefreshCw } from 'lucide-react';
+import { ExternalLink, Loader2, RefreshCw, X } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 
 interface Tweet {
@@ -25,6 +25,7 @@ export function TwitterMonitor() {
   const [data, setData] = useState<TwitterData | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
+  const [lightboxImage, setLightboxImage] = useState<string | null>(null);
 
   const fetchTweets = async () => {
     try {
@@ -71,9 +72,45 @@ export function TwitterMonitor() {
     }
   };
 
-  const truncateText = (text: string, maxLength: number = 200) => {
+  const truncateText = (text: string, maxLength: number = 280) => {
     if (text.length <= maxLength) return text;
     return text.substring(0, maxLength) + '...';
+  };
+
+  const renderMediaGrid = (mediaUrls: string[], tweetId: string) => {
+    if (!mediaUrls || mediaUrls.length === 0) return null;
+
+    const count = Math.min(mediaUrls.length, 4);
+    
+    // Grid layout based on image count
+    const gridClass = count === 1 
+      ? 'grid-cols-1' 
+      : count === 2 
+      ? 'grid-cols-2' 
+      : count === 3 
+      ? 'grid-cols-3' 
+      : 'grid-cols-2';
+
+    return (
+      <div className={`grid ${gridClass} gap-2 mt-4`}>
+        {mediaUrls.slice(0, 4).map((url, idx) => (
+          <div
+            key={`${tweetId}-${idx}`}
+            className="relative overflow-hidden rounded-lg border border-slate-700/50 hover:border-purple-500/50 transition-all cursor-pointer group"
+            onClick={() => setLightboxImage(url)}
+          >
+            <img
+              src={url}
+              alt={`Media ${idx + 1}`}
+              className={`w-full object-cover transition-transform group-hover:scale-105 ${
+                count === 1 ? 'h-64' : count === 3 && idx === 0 ? 'h-48' : 'h-32'
+              }`}
+            />
+            <div className="absolute inset-0 bg-black/0 group-hover:bg-black/10 transition-colors" />
+          </div>
+        ))}
+      </div>
+    );
   };
 
   if (loading) {
@@ -142,58 +179,79 @@ export function TwitterMonitor() {
           data.tweets.map((tweet) => (
             <Card
               key={tweet.id}
-              className="bg-slate-900/50 border-slate-800/50 hover:border-purple-500/30 transition-all"
+              className={`
+                border transition-all
+                ${tweet.is_rt 
+                  ? 'bg-purple-900/30 border-purple-800/30 hover:border-purple-500/50' 
+                  : 'bg-slate-900 border-slate-800/50 hover:border-blue-500/30'
+                }
+              `}
             >
+              {/* Retweet Header */}
+              {tweet.is_rt && tweet.rt_source && (
+                <div className="px-6 pt-4 pb-2 border-b border-purple-800/20">
+                  <div className="flex items-center gap-2 text-sm text-purple-300">
+                    <span className="text-base">🔁</span>
+                    <span>转发自</span>
+                    <a
+                      href={`https://twitter.com/${tweet.rt_source.replace('@', '')}`}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="font-semibold hover:text-purple-200 transition-colors"
+                    >
+                      {tweet.rt_source}
+                    </a>
+                  </div>
+                </div>
+              )}
+
               <CardHeader className="pb-3">
-                <div className="flex items-start justify-between">
-                  <div className="flex items-center gap-3">
-                    <div className="w-10 h-10 bg-purple-500/20 rounded-full flex items-center justify-center">
-                      <span className="text-lg">🐦</span>
+                <div className="flex items-start justify-between gap-4">
+                  <div className="flex items-start gap-3 flex-1 min-w-0">
+                    {/* Avatar */}
+                    <div className={`
+                      w-12 h-12 rounded-full flex items-center justify-center flex-shrink-0
+                      ${tweet.is_rt ? 'bg-purple-500/20' : 'bg-blue-500/20'}
+                    `}>
+                      <span className="text-xl">🐦</span>
                     </div>
-                    <div>
-                      <CardTitle className="text-base font-semibold text-white">
+                    
+                    {/* User Info */}
+                    <div className="flex-1 min-w-0">
+                      <CardTitle className="text-base font-semibold text-white truncate">
                         {tweet.name}
-                        {tweet.is_rt && tweet.rt_source && (
-                          <span className="ml-2 text-xs font-normal text-slate-500">
-                            转推自 @{tweet.rt_source}
-                          </span>
-                        )}
                       </CardTitle>
-                      <div className="flex items-center gap-2 text-sm text-slate-500">
-                        <span>@{tweet.screen_name}</span>
+                      <div className="flex items-center gap-2 text-sm text-slate-400">
+                        <span className="truncate">@{tweet.screen_name}</span>
                         <span>•</span>
-                        <span>{formatTime(tweet.created_at)}</span>
+                        <span className="whitespace-nowrap">{formatTime(tweet.created_at)}</span>
                       </div>
                     </div>
                   </div>
+                  
+                  {/* External Link */}
                   <a
                     href={tweet.url}
                     target="_blank"
                     rel="noopener noreferrer"
-                    className="text-purple-400 hover:text-purple-300 transition-colors"
+                    className={`
+                      flex-shrink-0 transition-colors
+                      ${tweet.is_rt ? 'text-purple-400 hover:text-purple-300' : 'text-blue-400 hover:text-blue-300'}
+                    `}
                   >
                     <ExternalLink className="h-4 w-4" />
                   </a>
                 </div>
               </CardHeader>
-              <CardContent>
-                <p className="text-slate-300 whitespace-pre-wrap mb-3">
+
+              <CardContent className="pt-0">
+                {/* Tweet Text */}
+                <p className="text-slate-200 whitespace-pre-wrap leading-relaxed">
                   {truncateText(tweet.text)}
                 </p>
                 
-                {/* Media */}
-                {tweet.media_urls && tweet.media_urls.length > 0 && (
-                  <div className="grid grid-cols-2 gap-2 mt-3">
-                    {tweet.media_urls.slice(0, 4).map((url, idx) => (
-                      <img
-                        key={idx}
-                        src={url}
-                        alt=""
-                        className="rounded-lg w-full h-32 object-cover border border-slate-700"
-                      />
-                    ))}
-                  </div>
-                )}
+                {/* Media Grid */}
+                {renderMediaGrid(tweet.media_urls, tweet.id)}
               </CardContent>
             </Card>
           ))
@@ -205,6 +263,27 @@ export function TwitterMonitor() {
           </Card>
         )}
       </div>
+
+      {/* Image Lightbox */}
+      {lightboxImage && (
+        <div
+          className="fixed inset-0 z-50 flex items-center justify-center bg-black/90 p-4 backdrop-blur-sm"
+          onClick={() => setLightboxImage(null)}
+        >
+          <button
+            className="absolute top-4 right-4 p-2 rounded-full bg-slate-800/80 hover:bg-slate-700 transition-colors"
+            onClick={() => setLightboxImage(null)}
+          >
+            <X className="h-6 w-6 text-white" />
+          </button>
+          <img
+            src={lightboxImage}
+            alt="Full size"
+            className="max-w-full max-h-full object-contain rounded-lg"
+            onClick={(e) => e.stopPropagation()}
+          />
+        </div>
+      )}
     </div>
   );
 }
