@@ -16,7 +16,8 @@
       "confidence": "low",
       "evidence": "homepage: staking, page"
     },
-    "source": "homepage"
+    "source": "homepage",
+    "image": "https://coin-images.coingecko.com/coins/images/67626/small/espresso.jpg?1753324525"
   },
   "AZTEC": {
     "symbol": "AZTEC",
@@ -35,7 +36,8 @@
       "confidence": "low",
       "evidence": "homepage: staking, button, page"
     },
-    "source": "homepage"
+    "source": "homepage",
+    "image": "https://coin-images.coingecko.com/coins/images/70681/small/aztec.png?1763091883"
   },
   "UP": {
     "symbol": "UP",
@@ -733,7 +735,8 @@
     "homepage": "https://worldlibertyfinancial.com/usd1",
     "twitter_screen_name": "worldlibertyfi",
     "last_scanned": "2026-02-25T13:22:50.540Z",
-    "source": "homepage"
+    "source": "homepage",
+    "image": "https://coin-images.coingecko.com/coins/images/54977/small/USD1_1000x1000_transparent.png?1749297002"
   },
   "TRIA": {
     "homepage": "https://www.tria.so",

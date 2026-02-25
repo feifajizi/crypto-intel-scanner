@@ -129,16 +129,17 @@ async function getCoinGeckoId(symbol) {
 async function getCoinGeckoInfo(symbol) {
   try {
     const id = await getCoinGeckoId(symbol);
-    if (!id) return { homepage: null, twitter: null };
+    if (!id) return { homepage: null, twitter: null, image: null };
     
     await sleep(6000);
     const cg = await fetchJsonRetry(`https://api.coingecko.com/api/v3/coins/${id}`, 10000);
     return {
       homepage: cg?.links?.homepage?.[0] || null,
       twitter: cg?.links?.twitter_screen_name || null,
+      image: cg?.image?.small || cg?.image?.thumb || cg?.image?.large || null,
     };
   } catch {
-    return { homepage: null, twitter: null };
+    return { homepage: null, twitter: null, image: null };
   }
 }
 
@@ -308,7 +309,7 @@ async function enrichCoin(coin) {
   
   // Step 1: 获取 CoinGecko 信息（作为 fallback）
   const cgInfo = await getCoinGeckoInfo(symbol);
-  console.log(`    CoinGecko: ${cgInfo.homepage || 'N/A'} | @${cgInfo.twitter || 'N/A'}`);
+  console.log(`    CoinGecko: ${cgInfo.homepage || 'N/A'} | @${cgInfo.twitter || 'N/A'} | image: ${cgInfo.image ? '✓' : 'N/A'}`);
   
   if (!cgInfo.homepage) {
     console.log(`    ❌ No homepage found`);
@@ -316,6 +317,7 @@ async function enrichCoin(coin) {
       ...coin,
       homepage: null,
       twitter_screen_name: cgInfo.twitter || null,
+      image: cgInfo.image || null,
       source: 'coingecko',
       last_scanned: new Date().toISOString(),
     };
@@ -365,6 +367,7 @@ async function enrichCoin(coin) {
     ...coin,
     homepage: cgInfo.homepage,
     twitter_screen_name: finalTwitter,
+    image: cgInfo.image || null,
     source,
     last_scanned: new Date().toISOString(),
   };

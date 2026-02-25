@@ -439,11 +439,12 @@ export default async function handler(req, res) {
       
       // Step 0: Check coin_enrichment.json first (from offline scanner)
       const ce = coinEnrichment[coin.symbol];
-      if (ce && (ce.homepage || ce.twitter_screen_name)) {
+      if (ce && (ce.homepage || ce.twitter_screen_name || ce.image)) {
         enriched.push({
           ...coin,
           homepage: ce.homepage || coin.homepage,
           twitter_screen_name: ce.twitter_screen_name || coin.twitter_screen_name,
+          image: ce.image || coin.image,
           staking: ce.staking || undefined,
         });
         continue;
