@@ -15,6 +15,22 @@ function loadOverrides() {
   }
 }
 
+function loadCoinEnrichment() {
+  try {
+    const __filename = fileURLToPath(import.meta.url);
+    const __dirname = path.dirname(__filename);
+    const p = path.join(__dirname, 'coin_enrichment.json');
+    console.log(`[loadCoinEnrichment] Trying to load from: ${p}`);
+    const raw = fs.readFileSync(p, 'utf-8');
+    const data = JSON.parse(raw) || {};
+    console.log(`[loadCoinEnrichment] Loaded ${Object.keys(data).length} coins`);
+    return data;
+  } catch (err) {
+    console.error(`[loadCoinEnrichment] Error: ${err.message}`);
+    return {};
+  }
+}
+
 // Vercel Serverless Function
 // Latest coins listed on Gate (spot + futures), with optional conservative link enrichment via CoinGecko
 
@@ -99,9 +115,12 @@ async function coingeckoLinksById(id) {
   const homepage = Array.isArray(detail?.links?.homepage) ? detail.links.homepage.find(Boolean) : '';
   const twitter = detail?.links?.twitter_screen_name ? String(detail.links.twitter_screen_name) : '';
 
+  const image = detail?.image?.small || detail?.image?.thumb || '';
+
   return {
     homepage: homepage || undefined,
     twitter_screen_name: twitter || undefined,
+    image: image || undefined,
   };
 }
 
@@ -267,14 +286,129 @@ export default async function handler(req, res) {
       });
     }
 
-    const coins = Array.from(merged.values())
+    // Filter leveraged tokens (3L/5L/3S/5S endings)
+    const LEVERAGED_RE = /(?:3|5)[LS]$/i;
+
+    // === COMPREHENSIVE STOCK / RWA / INDEX / COMMODITY / FOREX BLACKLIST ===
+    const STOCK_BLACKLIST = new Set([
+      // US Stocks
+      'AAPL','MSFT','TSLA','NVDA','AMD','AMZN','GOOGL','GOOG','META','NFLX',
+      'AVGO','INTC','CSCO','IBM','ORCL','CRM','ADBE','PYPL','SQ','SHOP',
+      'ARM','MRVL','LLY','UNH','JNJ','PFE','MRK','ABBV','TMO','ABT',
+      'JPM','BAC','GS','MS','WFC','C','BLK','SCHW','AXP','V','MA',
+      'KO','PEP','MCD','SBUX','NKE','DIS','CMCSA','T','VZ','TMUS',
+      'PG','WMT','HD','LOW','COST','TGT','AMGN','GILD','BIDU',
+      'BABA','JD','PDD','NIO','XPEV','LI','BILI','TME','NTES','MOMO',
+      'ACN','GE','CAT','BA','RTX','LMT','HON','MMM','DE','UPS',
+      'XOM','CVX','COP','SLB','EOG','MPC','PSX','OXY',
+      'ASML','TSM','QCOM','TXN','MU','AMAT','LRCX','KLAC','SNPS','CDNS',
+      'COHR','LIN','APD','SHW','ECL','FCX','NEM','COIN','MSTR','HOOD',
+      'PLTR','SNOW','NET','DDOG','ZS','CRWD','PANW','OKTA','RBLX',
+      'SPOT','SNAP','PINS','UBER','LYFT','ABNB','DASH','ROKU',
+      'RIVN','LCID','F','GM','STLA','HMC','TM','RACE',
+      'LITE','AGG','TLT','IEFA','IAU','SPY','QQQ','IWM','DIA','EFA',
+      'VTI','VOO','VEA','VWO','BND','HYG','LQD','TIP','SHY','IEF',
+      'GLD','SLV','USO','UNG','ARKK','ARKG','XLF','XLE','XLK','XLV',
+      // Indices & Forex & Commodities on Gate
+      'SPX500','SPX','NAS100','NDX','US30','DJI','US2000','UK100','FTSE',
+      'JPN225','HK50','AUS200','TW88','DAX','CAC40','STOXX50',
+      'VIX','EVIX','BVIX','UVXY','VXX',
+      'EURUSD','GBPUSD','USDJPY','AUDUSD','USDCAD','USDCHF','NZDUSD',
+      'EURGBP','EURJPY','GBPJPY','AUDJPY','CADJPY','CHFJPY',
+      'HSCHKD','USDCNH','USDHKD','USDSGD','USDMXN','USDZAR',
+      'XAU','XAG','XPT','XPD','XCU','XAL','XNI','XPB','XBR','XTI',
+      'GOLD','SILVER','OIL','GAS','NATGAS','BRENT','WTI','COPPER',
+      'CORN','WHEAT','SOYBEAN','COTTON','SUGAR','COFFEE','COCOA',
+      // Ondo tokenized stocks
+      'AMDON','PGON','LMTON','SLVON','IEFAON','AGGON','IAUON','TLTON',
+      'RDDTON','FUTUON','JDON','BTGOON','AVOON',
+      // xStock tokens
+      'PLTRX','ORCLX','TQQQX',
+      // Misc known non-crypto
+      '3KDS','EQTY',
+    ]);
+
+    // Pattern-based filters for stock-like symbols
+    const STOCK_PATTERNS = [
+      /^[A-Z]{2,5}USD$/i,      // Forex pairs like EURUSD, GBPUSD
+      /^USD[A-Z]{3}$/i,        // USDJPY, USDCAD (but not USDT/USDC)
+      /^X[A-Z]{2}$/i,          // XAU, XAG, XPT, XPD, XCU, XAL, XNI, XPB, XBR, XTI
+      /^\d+KDS$/i,             // 3KDS etc
+      /^[A-Z]{2,5}ON$/i,       // Ondo tokenized stocks: AMDON, PGON, LMTON, SLVON, IEFAON, AGGON, IAUON, TLTON, RDDTON, FUTUON, JDON
+      /^[A-Z]{2,5}X$/i,       // xStock tokens: PLTRX, ORCLX, TQQQX
+    ];
+
+    // Whitelist to protect legit crypto that might match patterns
+    const CRYPTO_WHITELIST = new Set([
+      'BTC','ETH','BNB','SOL','ADA','DOT','AVAX','MATIC','ATOM','NEAR',
+      'FTM','ARB','OP','APT','SUI','SEI','TIA','PYTH','JTO','JUP',
+      'LINK','UNI','AAVE','MKR','SNX','CRV','COMP','SUSHI','YFI','BAL',
+      'FIL','AR','RENDER','AKT','THETA','RNDR','HNT','IOTX','JASMY',
+      'DYDX','GMX','PERP','INJ','STX','RUNE','OSMO','KAVA','CKB',
+      'FET','OCEAN','AGIX','TAO','WLD','ARKM','ONDO','PENDLE','ENA',
+      'TRX','XRP','LTC','BCH','ETC','XLM','ALGO','HBAR','VET','EGLD',
+      'TON','KAS','ORDI','SATS','RATS','1000SATS','MINA','ZEC','DASH',
+      'XMR','IOTA','NEO','QTUM','ZIL','ONE','ICX','ZRX','BAT','ENJ',
+      'MANA','SAND','AXS','GALA','IMX','FLOW','APE','BLUR','MAGIC',
+      'ILV','YGG','PRIME','PIXEL','PORTAL','ACE','XAI','STRK','METIS',
+      'CELO','RSR','GRT','LDO','RPL','SSV','ETHFI','ALT','MANTA',
+      'DYM','BOME','WIF','PEPE','FLOKI','BONK','MEW','POPCAT','TURBO',
+      'USDT','USDC','DAI','FRAX','TUSD','BUSD','FDUSD','USDD',
+      'WBTC','WETH','STETH','CBETH','RETH','LIDO','EIGEN',
+      'USD1','PAXG', // PAXG is gold-backed but trades as crypto
+      // Protect from ON/X suffix patterns
+      'MON','NEON','BISON','PION','IRON','ICON','RADON','TRON','MASON',
+      'PYTHON','ORION','PHOTON','NEUTRON','PROTON','HELION','PARTON',
+      'NEIRO','COMMON','ELIZAOS','UNION',
+      'ONYX','LYNX','FLUX','APEX','HELIX',
+      'AVAX','STMX','INX','FLX','MIX',
+      'BOX','FOX','WAX','HEX','REX','ALEX','BEAMX','XRDX',
+      'MVRX','CONVEX','VERTEX','VORTEX',
+      // Other legit
+      'TRAC','GHO','SBTC','CC','AT','ON','FUN','LIT',
+    ]);
+
+    // Name-based patterns to catch stock tokens by company name
+    const STOCK_NAME_PATTERNS = [
+      /\b(tesla|apple|microsoft|nvidia|amazon|alphabet|google|netflix|berkshire)\b/i,
+      /\b(jpmorgan|goldman|morgan stanley|bank of america|citigroup|wells fargo)\b/i,
+      /\b(coca.?cola|pepsi|mcdonalds|starbucks|nike|disney|comcast)\b/i,
+      /\b(exxon|chevron|shell|bp|total)\b/i,
+      /\b(pfizer|moderna|johnson|merck|abbvie|eli lilly)\b/i,
+      /\b(s&p|nasdaq|dow jones|russell|ftse|nikkei|hang seng)\b/i,
+      /\bondo tokenized\b/i,
+      /\bxstock\b/i,
+      /\bishares\b/i,
+      /\betf\b/i,
+      /\bprocter\s*&?\s*gamble\b/i,
+      /\blockheed\b/i,
+      /\bbitgo holdings\b/i,
+    ];
+
+    const isStockToken = (c) => {
+      const sym = c.symbol.toUpperCase();
+      // Whitelist always passes
+      if (CRYPTO_WHITELIST.has(sym)) return false;
+      // Blacklist
+      if (STOCK_BLACKLIST.has(sym)) return true;
+      // Pattern match on symbol
+      if (STOCK_PATTERNS.some(p => p.test(sym))) return true;
+      // Name match
+      const name = c.name || '';
+      if (STOCK_NAME_PATTERNS.some(p => p.test(name))) return true;
+      return false;
+    };
+
+    const filtered = Array.from(merged.values()).filter(c => !LEVERAGED_RE.test(c.symbol) && !isStockToken(c));
+
+    const coins = filtered
       .sort((a, b) => (toInt(b.listedTs) - toInt(a.listedTs)) || (b.total_volume - a.total_volume))
       .slice(0, limit)
       .map((c) => ({
         id: c.symbol.toLowerCase(),
         symbol: c.symbol,
         name: c.name,
-        image: undefined,
+        image: `https://www.gate.com/images/coin_icon/64/${c.symbol.toLowerCase()}.png`,
         current_price: c.current_price,
         market_cap: 0,
         total_volume: c.total_volume,
@@ -288,18 +422,33 @@ export default async function handler(req, res) {
     }
 
     const overrides = loadOverrides();
+    const coinEnrichment = loadCoinEnrichment();
 
     // Enrichment priority:
+    // 0) coin_enrichment.json (from offline scanner - most complete)
     // 1) Manual overrides by (network:address)
     // 2) Gate -> contract address -> GeckoTerminal -> coingecko_coin_id -> CoinGecko links (precise)
     // 3) Fallback conservative CoinGecko search (symbol+name unique exact match)
     //
     // Hard cap to avoid blowing up serverless runtime.
-    const MAX_ENRICH = 20;
+    const MAX_ENRICH = 30;
     const enriched = [];
 
     for (let i = 0; i < coins.length; i++) {
       const coin = coins[i];
+      
+      // Step 0: Check coin_enrichment.json first (from offline scanner)
+      const ce = coinEnrichment[coin.symbol];
+      if (ce && (ce.homepage || ce.twitter_screen_name)) {
+        enriched.push({
+          ...coin,
+          homepage: ce.homepage || coin.homepage,
+          twitter_screen_name: ce.twitter_screen_name || coin.twitter_screen_name,
+          staking: ce.staking || undefined,
+        });
+        continue;
+      }
+      
       if (i >= MAX_ENRICH) {
         enriched.push(coin);
         continue;
@@ -367,8 +516,8 @@ export default async function handler(req, res) {
             out = {
               ...out,
               ...(links || {}),
-              // Optional: use image from GeckoTerminal if we don't have one
-              image: out.image || gt?.image_url || out.image,
+              // Prefer CoinGecko image > GeckoTerminal image > Gate icon
+              image: links?.image || gt?.image_url || out.image,
             };
             applied = true;
             break;
