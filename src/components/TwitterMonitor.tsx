@@ -21,11 +21,79 @@ interface TwitterData {
   tweets: Tweet[];
 }
 
+interface TranslationCache {
+  [key: string]: string;
+}
+
 export function TwitterMonitor() {
   const [data, setData] = useState<TwitterData | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [lightboxImage, setLightboxImage] = useState<string | null>(null);
+  const [translations, setTranslations] = useState<TranslationCache>({});
+  const [translating, setTranslating] = useState<Set<string>>(new Set());
+
+  // Load translations from localStorage on mount
+  useEffect(() => {
+    const cached = localStorage.getItem('tweet_translations');
+    if (cached) {
+      try {
+        setTranslations(JSON.parse(cached));
+      } catch (e) {
+        console.error('Failed to parse cached translations:', e);
+      }
+    }
+  }, []);
+
+  // Save translations to localStorage whenever they change
+  useEffect(() => {
+    if (Object.keys(translations).length > 0) {
+      localStorage.setItem('tweet_translations', JSON.stringify(translations));
+    }
+  }, [translations]);
+
+  // Check if text is English (>50% English characters)
+  const isEnglish = (text: string): boolean => {
+    const englishChars = text.match(/[a-zA-Z]/g)?.length || 0;
+    const totalChars = text.replace(/\s/g, '').length;
+    return totalChars > 0 && (englishChars / totalChars) > 0.5;
+  };
+
+  // Translate text using API
+  const translateText = async (tweetId: string, text: string) => {
+    // Check cache first
+    if (translations[tweetId]) {
+      return;
+    }
+
+    // Skip if already translating
+    if (translating.has(tweetId)) {
+      return;
+    }
+
+    try {
+      setTranslating(prev => new Set(prev).add(tweetId));
+
+      const response = await fetch(`/api/translate.js?text=${encodeURIComponent(text)}`);
+      const data = await response.json();
+
+      if (data.translation && data.translation !== text) {
+        setTranslations(prev => ({
+          ...prev,
+          [tweetId]: data.translation
+        }));
+      }
+    } catch (err) {
+      console.error('Translation failed:', err);
+      // Silent fail - just don't show translation
+    } finally {
+      setTranslating(prev => {
+        const next = new Set(prev);
+        next.delete(tweetId);
+        return next;
+      });
+    }
+  };
 
   const fetchTweets = async () => {
     try {
@@ -39,6 +107,15 @@ export function TwitterMonitor() {
       
       const jsonData = await response.json();
       setData(jsonData);
+
+      // Auto-translate English tweets
+      if (jsonData.tweets) {
+        jsonData.tweets.forEach((tweet: Tweet) => {
+          if (isEnglish(tweet.text)) {
+            translateText(tweet.id, tweet.text);
+          }
+        });
+      }
     } catch (err) {
       setError(err instanceof Error ? err.message : 'Unknown error');
       console.error('Error fetching tweets:', err);
@@ -264,9 +341,34 @@ export function TwitterMonitor() {
               </CardHeader>
 
               <CardContent className="pt-0">
-                {/* Tweet Text */}
-                <div className="text-slate-200 whitespace-pre-wrap leading-relaxed">
-                  {renderTextWithLinks(tweet.text)}
+                {/* Tweet Text with Translation */}
+                <div className="space-y-2">
+                  {translations[tweet.id] ? (
+                    <>
+                      {/* Original text (small, gray) */}
+                      <div className="text-xs text-slate-500 whitespace-pre-wrap leading-relaxed">
+                        {renderTextWithLinks(tweet.text)}
+                      </div>
+                      {/* Translation (normal, white) */}
+                      <div className="text-slate-200 whitespace-pre-wrap leading-relaxed">
+                        {translations[tweet.id]}
+                      </div>
+                    </>
+                  ) : (
+                    <>
+                      {/* Original text only */}
+                      <div className="text-slate-200 whitespace-pre-wrap leading-relaxed">
+                        {renderTextWithLinks(tweet.text)}
+                      </div>
+                      {/* Translating indicator */}
+                      {translating.has(tweet.id) && (
+                        <div className="text-xs text-purple-400 flex items-center gap-2">
+                          <Loader2 className="h-3 w-3 animate-spin" />
+                          <span>翻译中...</span>
+                        </div>
+                      )}
+                    </>
+                  )}
                 </div>
                 
                 {/* Media Grid */}
