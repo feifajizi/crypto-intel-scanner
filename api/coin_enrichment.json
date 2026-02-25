@@ -99,7 +99,8 @@
       "apy": null,
       "confidence": "low",
       "evidence": "homepage: staking, page"
-    }
+    },
+    "image": "https://coin-images.coingecko.com/coins/images/70921/small/zama.png?1764591992"
   },
   "INX": {
     "symbol": "INX",
@@ -117,7 +118,8 @@
       "apy": null,
       "confidence": "low",
       "evidence": "homepage: "
-    }
+    },
+    "image": "https://coin-images.coingecko.com/coins/images/70868/small/infinex.png?1764322875"
   },
   "BTGOON": {
     "symbol": "BTGOON",
@@ -135,7 +137,8 @@
       "apy": null,
       "confidence": "low",
       "evidence": "homepage: "
-    }
+    },
+    "image": "https://coin-images.coingecko.com/coins/images/71702/small/btgoon_160x160.png?1769009385"
   },
   "PENGUIN": {
     "symbol": "PENGUIN",
@@ -195,7 +198,8 @@
     ],
     "homepage": "https://www.ethgas.com/",
     "twitter_screen_name": "ETHGASofficial",
-    "last_scanned": "2026-02-25T12:27:46.688Z"
+    "last_scanned": "2026-02-25T12:27:46.688Z",
+    "image": "https://coin-images.coingecko.com/coins/images/71375/small/ethgas_token_200.png?1769055039"
   },
   "SKR": {
     "symbol": "SKR",
@@ -213,7 +217,8 @@
       "apy": null,
       "confidence": "low",
       "evidence": "homepage: staking, page"
-    }
+    },
+    "image": "https://coin-images.coingecko.com/coins/images/70974/small/seeker-logo.jpg?1764922774"
   },
   "ACU": {
     "symbol": "ACU",
@@ -231,7 +236,8 @@
       "confidence": "low",
       "evidence": "homepage: staking, APY:4%, page"
     },
-    "twitter_screen_name": "a_d_c_"
+    "twitter_screen_name": "a_d_c_",
+    "image": "https://coin-images.coingecko.com/coins/images/34367/small/Acurast-symbol-dark-bg.png?1728418440"
   },
   "FOGO": {
     "symbol": "FOGO",
