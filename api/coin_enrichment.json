@@ -1,0 +1,763 @@
+{
+  "ESP": {
+    "symbol": "ESP",
+    "name": "Espresso",
+    "listed_at": "2026-02-12 13:00",
+    "markets": [
+      "spot",
+      "futures"
+    ],
+    "homepage": "https://www.espresso.foundation/",
+    "twitter_screen_name": "espressoFNDN",
+    "last_scanned": "2026-02-25T13:21:53.485Z",
+    "staking": {
+      "url": "https://staking.main.net.espresso.network/",
+      "apy": null,
+      "confidence": "low",
+      "evidence": "homepage: staking, page"
+    },
+    "source": "homepage"
+  },
+  "AZTEC": {
+    "symbol": "AZTEC",
+    "name": "Aztec",
+    "listed_at": "2026-02-12 07:00",
+    "markets": [
+      "spot",
+      "futures"
+    ],
+    "homepage": "https://aztec.network/",
+    "twitter_screen_name": "aztecnetwork",
+    "last_scanned": "2026-02-25T13:21:53.933Z",
+    "staking": {
+      "url": "https://stake.aztec.network/",
+      "apy": null,
+      "confidence": "low",
+      "evidence": "homepage: staking, button, page"
+    },
+    "source": "homepage"
+  },
+  "UP": {
+    "symbol": "UP",
+    "name": "Superform",
+    "listed_at": "2026-02-10 17:00",
+    "markets": [
+      "spot"
+    ],
+    "homepage": "https://www.superform.xyz/",
+    "twitter_screen_name": "superformxyz",
+    "last_scanned": "2026-02-25T12:27:46.688Z",
+    "staking": {
+      "url": "https://www.superform.xyz/",
+      "apy": null,
+      "confidence": "low",
+      "evidence": "homepage: staking"
+    }
+  },
+  "RNBW": {
+    "symbol": "RNBW",
+    "name": "Rainbow",
+    "listed_at": "2026-02-05 17:00",
+    "markets": [
+      "spot",
+      "futures"
+    ],
+    "homepage": "https://rainbow.me/",
+    "twitter_screen_name": "christianbaroni",
+    "last_scanned": "2026-02-25T12:27:46.688Z"
+  },
+  "BIRB": {
+    "symbol": "BIRB",
+    "name": "Moonbirds",
+    "listed_at": "2026-02-03 09:00",
+    "markets": [
+      "spot",
+      "futures"
+    ],
+    "homepage": "https://moonbirds.com/",
+    "twitter_screen_name": "spencer",
+    "last_scanned": "2026-02-25T12:27:46.688Z"
+  },
+  "ZAMA": {
+    "symbol": "ZAMA",
+    "name": "Zama",
+    "listed_at": "2026-02-02 13:00",
+    "markets": [
+      "spot",
+      "futures"
+    ],
+    "homepage": "https://www.zama.org/",
+    "twitter_screen_name": "randhindi",
+    "last_scanned": "2026-02-25T12:27:46.688Z",
+    "staking": {
+      "url": "https://staking.zama.org/",
+      "apy": null,
+      "confidence": "low",
+      "evidence": "homepage: staking, page"
+    }
+  },
+  "INX": {
+    "symbol": "INX",
+    "name": "Infinex",
+    "listed_at": "2026-01-31 12:30",
+    "markets": [
+      "spot",
+      "futures"
+    ],
+    "homepage": "https://infinex.xyz/",
+    "twitter_screen_name": "kaiynne",
+    "last_scanned": "2026-02-25T12:27:46.688Z",
+    "staking": {
+      "url": "https://infinex.xyz/",
+      "apy": null,
+      "confidence": "low",
+      "evidence": "homepage: "
+    }
+  },
+  "BTGOON": {
+    "symbol": "BTGOON",
+    "name": "BitGo Holdings Ondo Tokenized",
+    "listed_at": "2026-01-26 14:00",
+    "markets": [
+      "spot",
+      "futures"
+    ],
+    "homepage": "https://app.ondo.finance/",
+    "twitter_screen_name": "ondofinance",
+    "last_scanned": "2026-02-18T12:16:52.157Z",
+    "staking": {
+      "url": "https://app.ondo.finance/",
+      "apy": null,
+      "confidence": "low",
+      "evidence": "homepage: "
+    }
+  },
+  "PENGUIN": {
+    "symbol": "PENGUIN",
+    "name": "Nietzschean Penguin",
+    "listed_at": "2026-01-24 12:00",
+    "markets": [
+      "spot",
+      "futures"
+    ],
+    "homepage": "https://nietzscheanpenguin.lovable.app/",
+    "twitter_screen_name": "i",
+    "last_scanned": "2026-02-25T12:27:46.688Z"
+  },
+  "ELSA": {
+    "symbol": "ELSA",
+    "name": "HeyElsa",
+    "listed_at": "2026-01-23 12:00",
+    "markets": [
+      "spot",
+      "futures"
+    ],
+    "homepage": "https://app.heyelsa.ai/",
+    "twitter_screen_name": "TheDhawalS",
+    "last_scanned": "2026-02-25T12:27:46.688Z"
+  },
+  "IMU": {
+    "symbol": "IMU",
+    "name": "Immunefi",
+    "listed_at": "2026-01-22 14:00",
+    "markets": [
+      "spot",
+      "futures"
+    ],
+    "homepage": "https://immunefi.com/",
+    "twitter_screen_name": "mitchellamador",
+    "last_scanned": "2026-02-25T12:27:46.688Z"
+  },
+  "SENT": {
+    "symbol": "SENT",
+    "name": "Sentient",
+    "listed_at": "2026-01-22 12:00",
+    "markets": [
+      "spot",
+      "futures"
+    ],
+    "homepage": "https://www.sentient.xyz/",
+    "twitter_screen_name": "viswanathpramod",
+    "last_scanned": "2026-02-25T12:27:46.688Z"
+  },
+  "GWEI": {
+    "symbol": "GWEI",
+    "name": "ETHGas",
+    "listed_at": "2026-01-21 14:00",
+    "markets": [
+      "spot",
+      "futures"
+    ],
+    "homepage": "https://www.ethgas.com/",
+    "twitter_screen_name": "ETHGASofficial",
+    "last_scanned": "2026-02-25T12:27:46.688Z"
+  },
+  "SKR": {
+    "symbol": "SKR",
+    "name": "Seeker",
+    "listed_at": "2026-01-21 02:00",
+    "markets": [
+      "spot",
+      "futures"
+    ],
+    "homepage": "https://solanamobile.com/",
+    "twitter_screen_name": "solanamobile",
+    "last_scanned": "2026-02-18T12:16:52.157Z",
+    "staking": {
+      "url": "https://stake.solanamobile.com/",
+      "apy": null,
+      "confidence": "low",
+      "evidence": "homepage: staking, page"
+    }
+  },
+  "ACU": {
+    "symbol": "ACU",
+    "name": "Acurast",
+    "listed_at": "2026-01-20 12:00",
+    "markets": [
+      "spot",
+      "futures"
+    ],
+    "homepage": "https://acurast.com/",
+    "last_scanned": "2026-02-25T12:27:46.688Z",
+    "staking": {
+      "url": "https://acurast.com/staking",
+      "apy": "4%",
+      "confidence": "low",
+      "evidence": "homepage: staking, APY:4%, page"
+    },
+    "twitter_screen_name": "a_d_c_"
+  },
+  "FOGO": {
+    "symbol": "FOGO",
+    "name": "Fogo",
+    "listed_at": "2026-01-15 14:00",
+    "markets": [
+      "spot",
+      "futures"
+    ],
+    "homepage": "https://www.fogo.io/",
+    "twitter_screen_name": "0xdoug",
+    "last_scanned": "2026-02-25T12:27:46.688Z",
+    "staking": {
+      "url": "https://www.fogo.io/",
+      "apy": null,
+      "confidence": "low",
+      "evidence": "homepage: staking"
+    }
+  },
+  "FUN": {
+    "symbol": "FUN",
+    "name": "Sport.Fun",
+    "listed_at": "2026-01-15 14:00",
+    "markets": [
+      "spot",
+      "futures"
+    ],
+    "homepage": "https://www.sport.fun/",
+    "twitter_screen_name": "footballdotfun",
+    "last_scanned": "2026-02-25T12:27:46.688Z"
+  },
+  "OWL": {
+    "symbol": "OWL",
+    "name": "Owlto Finance",
+    "listed_at": "2026-01-15 11:00",
+    "markets": [
+      "spot",
+      "futures"
+    ],
+    "homepage": "https://owlto.finance/",
+    "twitter_screen_name": "krystalhkowlto",
+    "last_scanned": "2026-02-25T12:27:46.688Z"
+  },
+  "小股东": {
+    "symbol": "小股东",
+    "name": "小股东",
+    "listed_at": "2026-01-14 07:00",
+    "markets": [
+      "spot",
+      "futures"
+    ],
+    "homepage": "https://four.meme/token/0x51d5b1377b4d429283e8156540855ece77ad4444",
+    "last_scanned": "2026-02-18T12:16:52.157Z",
+    "staking": {
+      "url": "https://four.meme/token/0x51d5b1377b4d429283e8156540855ece77ad4444",
+      "apy": null,
+      "confidence": "low",
+      "evidence": "homepage: staking"
+    }
+  },
+  "老子": {
+    "symbol": "老子",
+    "name": "老子",
+    "listed_at": "2026-01-10 06:00",
+    "markets": [
+      "spot",
+      "futures"
+    ],
+    "homepage": "https://four.meme/token/0x1a5f9d77ca46646cd4937fd8d093f460b66f4444",
+    "last_scanned": "2026-02-18T12:16:52.157Z",
+    "staking": {
+      "url": "https://four.meme/token/0x1a5f9d77ca46646cd4937fd8d093f460b66f4444",
+      "apy": null,
+      "confidence": "low",
+      "evidence": "homepage: staking"
+    }
+  },
+  "DN": {
+    "symbol": "DN",
+    "name": "DeepNode",
+    "listed_at": "2026-01-09 10:00",
+    "markets": [
+      "spot",
+      "futures"
+    ],
+    "homepage": "https://deepnode.ai/",
+    "twitter_screen_name": "DeepNodeAI",
+    "last_scanned": "2026-02-25T12:27:46.688Z",
+    "staking": {
+      "url": "https://deepnode.ai/",
+      "apy": "1%",
+      "confidence": "low",
+      "evidence": "homepage: staking, APY:1%"
+    }
+  },
+  "我踏马来了": {
+    "symbol": "我踏马来了",
+    "name": "我踏马来了",
+    "listed_at": "2026-01-08 12:00",
+    "markets": [
+      "spot",
+      "futures"
+    ],
+    "homepage": "https://x.com/i/communities/2006728550356050179",
+    "last_scanned": "2026-02-18T12:16:52.157Z"
+  },
+  "ZTC": {
+    "symbol": "ZTC",
+    "name": "Zenchain",
+    "listed_at": "2026-01-07 12:00",
+    "markets": [
+      "spot"
+    ],
+    "homepage": "https://www.zenchain.io/",
+    "twitter_screen_name": "MetaMattz",
+    "last_scanned": "2026-02-25T12:27:46.688Z",
+    "staking": {
+      "url": "https://www.zenchain.io/",
+      "apy": null,
+      "confidence": "low",
+      "evidence": "homepage: staking"
+    }
+  },
+  "BREV": {
+    "symbol": "BREV",
+    "name": "Brevis",
+    "listed_at": "2026-01-06 14:00",
+    "markets": [
+      "spot",
+      "futures"
+    ],
+    "homepage": "https://brevis.network/",
+    "twitter_screen_name": "no89thkey",
+    "last_scanned": "2026-02-25T12:27:46.688Z"
+  },
+  "BTG": {
+    "symbol": "BTG",
+    "name": "Openverse Network",
+    "listed_at": "2026-01-02 04:00",
+    "markets": [
+      "spot"
+    ],
+    "homepage": "https://www.openverse.network/",
+    "twitter_screen_name": "OpenverseGlobal",
+    "last_scanned": "2026-02-25T12:27:46.688Z"
+  },
+  "OOOO": {
+    "symbol": "OOOO",
+    "name": "oooo",
+    "listed_at": "2025-12-30 12:00",
+    "markets": [
+      "spot"
+    ],
+    "homepage": "https://oooo.money/",
+    "twitter_screen_name": "oooo_money",
+    "last_scanned": "2026-02-18T12:16:52.157Z",
+    "staking": {
+      "url": "https://oooo.money/",
+      "apy": null,
+      "confidence": "low",
+      "evidence": "homepage: "
+    }
+  },
+  "LIT": {
+    "symbol": "LIT",
+    "name": "Lighter",
+    "listed_at": "2025-12-30 08:45",
+    "markets": [
+      "spot",
+      "futures"
+    ],
+    "homepage": "https://lighter.xyz/",
+    "twitter_screen_name": "Lighter_xyz",
+    "last_scanned": "2026-02-18T12:16:52.157Z"
+  },
+  "GAIX": {
+    "symbol": "GAIX",
+    "name": "GaiAI",
+    "listed_at": "2025-12-27 10:00",
+    "markets": [
+      "spot"
+    ],
+    "homepage": "https://gaiai.io/",
+    "twitter_screen_name": "GaiAIio",
+    "last_scanned": "2026-02-18T12:16:52.157Z",
+    "staking": {
+      "url": "https://gaiai.io/",
+      "apy": null,
+      "confidence": "low",
+      "evidence": "homepage: "
+    }
+  },
+  "ZKP": {
+    "symbol": "ZKP",
+    "name": "zkPass",
+    "listed_at": "2025-12-26 10:00",
+    "markets": [
+      "spot",
+      "futures"
+    ],
+    "homepage": "https://zkpass.org/",
+    "twitter_screen_name": "zkPass",
+    "last_scanned": "2026-02-18T12:16:52.157Z",
+    "staking": {
+      "url": "https://zkpass.org/",
+      "apy": null,
+      "confidence": "low",
+      "evidence": "homepage: "
+    }
+  },
+  "TBK": {
+    "symbol": "TBK",
+    "name": "Tronbank",
+    "listed_at": "2025-12-24 22:00",
+    "markets": [
+      "spot"
+    ],
+    "homepage": "https://tronbank.pro",
+    "twitter_screen_name": "TronBankPro",
+    "last_scanned": "2026-02-18T12:16:52.157Z"
+  },
+  "KDK": {
+    "symbol": "KDK",
+    "name": "Kodiak",
+    "listed_at": "2025-12-23 14:00",
+    "markets": [
+      "spot"
+    ],
+    "homepage": "https://www.kodiak.finance/",
+    "twitter_screen_name": "KodiakFi",
+    "last_scanned": "2026-02-18T12:16:52.157Z",
+    "staking": {
+      "url": "https://www.kodiak.finance/",
+      "apy": null,
+      "confidence": "low",
+      "evidence": "homepage: staking"
+    }
+  },
+  "TTD": {
+    "symbol": "TTD",
+    "name": "TradeTide",
+    "listed_at": "2025-12-20 10:00",
+    "markets": [
+      "spot"
+    ],
+    "homepage": "https://tradetide.cc/",
+    "twitter_screen_name": "tradetideAI_",
+    "last_scanned": "2026-02-18T12:16:52.157Z"
+  },
+  "VOOI": {
+    "symbol": "VOOI",
+    "name": "VOOI",
+    "listed_at": "2025-12-18 13:00",
+    "markets": [
+      "spot"
+    ],
+    "homepage": "https://vooi.io/",
+    "twitter_screen_name": "vooi_io",
+    "last_scanned": "2026-02-18T12:16:52.157Z"
+  },
+  "IR": {
+    "symbol": "IR",
+    "name": "Infrared",
+    "listed_at": "2025-12-17 12:00",
+    "markets": [
+      "spot",
+      "futures"
+    ],
+    "homepage": "https://infrared.finance/",
+    "twitter_screen_name": "InfraredFinance",
+    "last_scanned": "2026-02-18T12:16:52.157Z",
+    "staking": {
+      "url": "https://infrared.finance/",
+      "apy": null,
+      "confidence": "low",
+      "evidence": "homepage: staking"
+    }
+  },
+  "SCOR": {
+    "symbol": "SCOR",
+    "name": "SCOR",
+    "listed_at": "2025-12-17 10:00",
+    "markets": [
+      "spot"
+    ],
+    "homepage": "https://www.scor.io/",
+    "twitter_screen_name": "SCORProtocol",
+    "last_scanned": "2026-02-18T12:16:52.157Z"
+  },
+  "THQ": {
+    "symbol": "THQ",
+    "name": "Theoriq",
+    "listed_at": "2025-12-16 15:00",
+    "markets": [
+      "spot"
+    ],
+    "homepage": "https://www.theoriq.ai/",
+    "twitter_screen_name": "TheoriqAI",
+    "last_scanned": "2026-02-18T12:16:52.157Z",
+    "staking": {
+      "url": "https://app.mellow.finance/vaults/theoriq-staking-pool",
+      "apy": null,
+      "confidence": "low",
+      "evidence": "homepage: staking, page"
+    }
+  },
+  "MAGMA": {
+    "symbol": "MAGMA",
+    "name": "Magma Finance",
+    "listed_at": "2025-12-16 12:00",
+    "markets": [
+      "spot",
+      "futures"
+    ],
+    "homepage": "https://magmafinance.io/",
+    "twitter_screen_name": "Magma_Finance",
+    "last_scanned": "2026-02-18T12:16:52.157Z"
+  },
+  "RAVE": {
+    "symbol": "RAVE",
+    "name": "RaveDAO",
+    "listed_at": "2025-12-12 14:00",
+    "markets": [
+      "spot",
+      "futures"
+    ],
+    "homepage": "https://ravedao.com/",
+    "twitter_screen_name": "RaveDAO",
+    "last_scanned": "2026-02-18T12:16:52.157Z"
+  },
+  "POWER": {
+    "symbol": "POWER",
+    "name": "Power Protocol",
+    "listed_at": "2025-12-11 13:00",
+    "markets": [
+      "spot",
+      "futures"
+    ],
+    "homepage": "https://powerprotocol.xyz/en",
+    "twitter_screen_name": "PowerPrtcl",
+    "last_scanned": "2026-02-18T12:16:52.157Z",
+    "staking": {
+      "url": "https://staking.powerprotocol.xyz/staking",
+      "apy": null,
+      "confidence": "low",
+      "evidence": "homepage: staking, page"
+    }
+  },
+  "BTX": {
+    "symbol": "BTX",
+    "name": "BeatSwap",
+    "listed_at": "2025-12-11 12:00",
+    "markets": [
+      "spot"
+    ],
+    "homepage": "https://beatswap.io/",
+    "twitter_screen_name": "BeatXswap",
+    "last_scanned": "2026-02-18T12:16:52.157Z"
+  },
+  "ALMANAK": {
+    "symbol": "ALMANAK",
+    "name": "Almanak",
+    "listed_at": "2025-12-11 12:00",
+    "markets": [
+      "spot"
+    ],
+    "homepage": "https://almanak.co/",
+    "twitter_screen_name": "Almanak",
+    "last_scanned": "2026-02-18T12:16:52.157Z",
+    "staking": {
+      "url": "https://almanak.co/",
+      "apy": null,
+      "confidence": "low",
+      "evidence": "homepage: "
+    }
+  },
+  "CYS": {
+    "symbol": "CYS",
+    "name": "Cysic",
+    "listed_at": "2025-12-11 10:00",
+    "markets": [
+      "spot",
+      "futures"
+    ],
+    "homepage": "https://cysic.xyz/",
+    "twitter_screen_name": "cysic_xyz",
+    "last_scanned": "2026-02-18T12:16:52.157Z"
+  },
+  "KYO": {
+    "symbol": "KYO",
+    "name": "Kyo Finance",
+    "listed_at": "2025-12-10 09:00",
+    "markets": [
+      "spot"
+    ],
+    "homepage": "https://kyo.finance/",
+    "twitter_screen_name": "kyofinance",
+    "last_scanned": "2026-02-18T12:16:52.157Z",
+    "staking": {
+      "url": "https://kyo.finance/",
+      "apy": null,
+      "confidence": "low",
+      "evidence": "homepage: "
+    }
+  },
+  "TRAC": {
+    "symbol": "TRAC",
+    "name": "OriginTrail",
+    "listed_at": "2025-12-10 06:00",
+    "markets": [
+      "spot"
+    ],
+    "homepage": "https://origintrail.io/",
+    "twitter_screen_name": "origin_trail",
+    "last_scanned": "2026-02-18T12:16:52.157Z",
+    "staking": {
+      "url": "https://staking.origintrail.io/",
+      "apy": null,
+      "confidence": "low",
+      "evidence": "homepage: staking, page"
+    }
+  },
+  "WET": {
+    "symbol": "WET",
+    "name": "HumidiFi",
+    "listed_at": "2025-12-09 15:00",
+    "markets": [
+      "spot",
+      "futures"
+    ],
+    "homepage": "https://humidifi.xyz/",
+    "twitter_screen_name": "humidifi",
+    "last_scanned": "2026-02-18T12:16:52.157Z"
+  },
+  "NIGHT": {
+    "symbol": "NIGHT",
+    "name": "Midnight",
+    "listed_at": "2025-12-09 10:00",
+    "markets": [
+      "spot",
+      "futures"
+    ],
+    "homepage": "https://docs.midnight.network/",
+    "twitter_screen_name": "MidnightNtwrk",
+    "last_scanned": "2026-02-18T12:16:52.157Z"
+  },
+  "SBUXON": {
+    "symbol": "SBUXON",
+    "name": "Starbucks Ondo Tokenized",
+    "listed_at": "2025-12-09 08:30",
+    "markets": [
+      "spot"
+    ],
+    "homepage": "https://app.ondo.finance/assets/sbuxon",
+    "twitter_screen_name": "ondofinance",
+    "last_scanned": "2026-02-18T12:16:52.157Z",
+    "staking": {
+      "url": "https://app.ondo.finance/assets/sbuxon",
+      "apy": null,
+      "confidence": "low",
+      "evidence": "homepage: "
+    }
+  },
+  "JPMON": {
+    "symbol": "JPMON",
+    "name": "JPMorgan Chase Ondo Tokenized",
+    "listed_at": "2025-12-09 08:30",
+    "markets": [
+      "spot"
+    ],
+    "homepage": "https://app.ondo.finance/assets/jpmon",
+    "twitter_screen_name": "ondofinance",
+    "last_scanned": "2026-02-18T12:16:52.157Z",
+    "staking": {
+      "url": "https://app.ondo.finance/assets/jpmon",
+      "apy": null,
+      "confidence": "low",
+      "evidence": "homepage: "
+    }
+  },
+  "LMTON": {
+    "symbol": "LMTON",
+    "name": "Lockheed Ondo Tokenized",
+    "listed_at": "2025-12-09 07:30",
+    "markets": [
+      "spot"
+    ],
+    "homepage": "https://app.ondo.finance/assets/lmton",
+    "twitter_screen_name": "ondofinance",
+    "last_scanned": "2026-02-18T12:16:52.157Z",
+    "staking": {
+      "url": "https://app.ondo.finance/assets/lmton",
+      "apy": null,
+      "confidence": "low",
+      "evidence": "homepage: "
+    }
+  },
+  "CRYPTOBURG": {
+    "homepage": "https://www.cryptoburger.io/",
+    "twitter_screen_name": "cryptoburgerbtc",
+    "last_scanned": "2026-02-25T12:27:46.688Z"
+  },
+  "USD1": {
+    "homepage": "https://worldlibertyfinancial.com/usd1",
+    "twitter_screen_name": "worldlibertyfi",
+    "last_scanned": "2026-02-25T13:22:50.540Z",
+    "source": "homepage"
+  },
+  "TRIA": {
+    "homepage": "https://www.tria.so",
+    "twitter_screen_name": "Vijittria",
+    "last_scanned": "2026-02-25T12:27:46.688Z"
+  },
+  "3KDS": {
+    "homepage": "https://3kds.io",
+    "twitter_screen_name": "3KDS_OFFICIAL",
+    "last_scanned": "2026-02-25T12:27:46.688Z"
+  },
+  "FRAX": {
+    "homepage": "https://frax.com/",
+    "twitter_screen_name": "samkazemian",
+    "last_scanned": "2026-02-25T12:27:46.688Z"
+  },
+  "U": {
+    "homepage": "https://u.tech/",
+    "twitter_screen_name": "UTechStables",
+    "last_scanned": "2026-02-25T12:27:46.688Z"
+  },
+  "CODEX": {
+    "homepage": "https://www.codexfield.com/",
+    "twitter_screen_name": "CodexField",
+    "last_scanned": "2026-02-25T12:27:46.688Z"
+  }
+}
