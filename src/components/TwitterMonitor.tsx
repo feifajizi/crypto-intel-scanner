@@ -30,7 +30,7 @@ export function TwitterMonitor() {
     try {
       setLoading(true);
       setError(null);
-      const response = await fetch('/api/twitter_tweets.json');
+      const response = await fetch('/twitter_tweets.json');
       
       if (!response.ok) {
         throw new Error('Failed to fetch tweets');
