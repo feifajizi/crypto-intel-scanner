@@ -68,14 +68,20 @@ function CoinCard({ coin, index }: { coin: Coin; index: number }) {
         
         {/* 图标 */}
         <div className="relative">
-          <img 
-            src={coin.image || `https://via.placeholder.com/40?text=${coin.symbol}`} 
-            alt={coin.symbol}
-            className="w-10 h-10 rounded-full bg-slate-800 p-1"
-            onError={(e) => {
-              (e.target as HTMLImageElement).src = `https://via.placeholder.com/40?text=${coin.symbol}`;
-            }}
-          />
+          {coin.image ? (
+            <img 
+              src={coin.image} 
+              alt={coin.symbol}
+              className="w-10 h-10 rounded-full bg-slate-800 p-1"
+              onError={(e) => {
+                (e.target as HTMLImageElement).style.display = 'none';
+                (e.target as HTMLImageElement).nextElementSibling?.classList.remove('hidden');
+              }}
+            />
+          ) : null}
+          <div className={`w-10 h-10 rounded-full bg-gradient-to-br from-slate-700 to-slate-600 flex items-center justify-center text-xs font-bold text-white ${coin.image ? 'hidden' : ''}`}>
+            {coin.symbol.slice(0, 3)}
+          </div>
         </div>
         
         {/* 信息 */}
@@ -83,6 +89,17 @@ function CoinCard({ coin, index }: { coin: Coin; index: number }) {
           <div className="flex items-center gap-2">
             <h3 className="text-lg font-bold text-white">{coin.symbol}</h3>
             <span className="text-slate-500 text-sm truncate">{coin.name}</span>
+            {coin.staking?.url && (
+              <a
+                href={coin.staking.url}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-xs font-medium bg-emerald-500/20 text-emerald-400 border border-emerald-500/30 hover:bg-emerald-500/30 transition-all"
+                title={`Staking${coin.staking.apy ? ` (${coin.staking.apy})` : ''} — ${coin.staking.confidence || 'low'} confidence`}
+              >
+                🥩 Stake{coin.staking.apy ? ` ${coin.staking.apy}` : ''}
+              </a>
+            )}
           </div>
 
           {coin.token_network && coin.token_address && (
@@ -110,7 +127,7 @@ function CoinCard({ coin, index }: { coin: Coin; index: number }) {
           <div className="text-right">
             <p className="text-xs text-slate-500">市值</p>
             <p className="text-sm font-medium text-white">
-              ${(coin.market_cap / 1e9).toFixed(2)}B
+              {coin.market_cap ? `$${(coin.market_cap / 1e9).toFixed(2)}B` : 'N/A'}
             </p>
           </div>
           <div className="text-right">
@@ -123,7 +140,7 @@ function CoinCard({ coin, index }: { coin: Coin; index: number }) {
         
         {/* 链接按钮 + 扫描 */}
         <div className="flex items-center gap-2">
-          {twitterUrl && (
+          {twitterUrl ? (
             <a
               href={twitterUrl}
               target="_blank"
@@ -133,8 +150,12 @@ function CoinCard({ coin, index }: { coin: Coin; index: number }) {
             >
               <Twitter className="w-4 h-4" />
             </a>
+          ) : (
+            <span className="w-8 h-8 flex items-center justify-center rounded-lg bg-slate-800/50 text-slate-700 cursor-not-allowed" title="Twitter 未知">
+              <Twitter className="w-4 h-4" />
+            </span>
           )}
-          {homepageUrl && (
+          {homepageUrl ? (
             <a
               href={homepageUrl}
               target="_blank"
@@ -144,6 +165,10 @@ function CoinCard({ coin, index }: { coin: Coin; index: number }) {
             >
               <Globe className="w-4 h-4" />
             </a>
+          ) : (
+            <span className="w-8 h-8 flex items-center justify-center rounded-lg bg-slate-800/50 text-slate-700 cursor-not-allowed" title="官网未知">
+              <Globe className="w-4 h-4" />
+            </span>
           )}
 
           {homepageUrl && (

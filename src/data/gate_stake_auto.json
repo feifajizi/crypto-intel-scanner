@@ -1,33 +1,82 @@
 {
-  "generated_at": "2026-02-09T02:17:17.599Z",
-  "source": "Gate.io latest 100 (filtered: no meme/rwa, Puppeteer-scraped)",
-  "total_scanned": 7,
-  "found_count": 5,
+  "generated_at": "2026-02-25T12:27:46.685Z",
+  "source": "Gate.io latest 100 (filtered: no meme/rwa, API-based)",
+  "total_scanned": 27,
+  "found_count": 15,
   "results": [
+    {
+      "symbol": "ESP",
+      "name": "Espresso",
+      "homepage": "https://www.espresso.foundation/",
+      "staking_url": "https://www.espresso.foundation/",
+      "listed_at": "2026-02-12",
+      "current_price": 0.16277,
+      "total_volume": 3618528.2145,
+      "evidence_keywords": [
+        "\\bstake\\b",
+        "\\bstaking\\b",
+        "\\bearn\\b",
+        "\\breward(s)?\\b"
+      ]
+    },
+    {
+      "symbol": "AZTEC",
+      "name": "Aztec",
+      "homepage": "https://aztec.network/",
+      "staking_url": "https://aztec.network/",
+      "listed_at": "2026-02-12",
+      "current_price": 0.02504,
+      "total_volume": 2706848.86297,
+      "evidence_keywords": [
+        "\\bstake\\b",
+        "\\bstaking\\b",
+        "\\bvalidator\\b",
+        "\\bdelegate\\b",
+        "\\bearn\\b"
+      ]
+    },
+    {
+      "symbol": "UP",
+      "name": "Superform",
+      "homepage": "https://www.superform.xyz/",
+      "staking_url": "https://www.superform.xyz/",
+      "listed_at": "2026-02-10",
+      "current_price": 0.04607,
+      "total_volume": 1544549.46097,
+      "evidence_keywords": [
+        "\\bstaking\\b",
+        "\\bvalidator\\b",
+        "\\bearn\\b",
+        "\\byield\\b",
+        "\\bapy\\b"
+      ]
+    },
     {
       "symbol": "RNBW",
       "name": "Rainbow",
       "homepage": "https://rainbow.me/",
       "staking_url": "https://rainbow.me/staking",
       "listed_at": "2026-02-05",
-      "current_price": 0.03434,
-      "total_volume": 1041003.327068,
+      "current_price": 0.02243,
+      "total_volume": 741795.720462,
       "evidence_keywords": [
         "\\bstaking\\b"
       ]
     },
     {
-      "symbol": "DOGELONMARS",
-      "name": "Dogelon Mars",
-      "homepage": "https://dogelonmars.com/",
-      "staking_url": "https://dogelonmars.com/",
+      "symbol": "TRIA",
+      "name": "TRIA",
+      "homepage": "https://www.tria.so",
+      "staking_url": "https://www.tria.so/",
       "listed_at": "2026-02-03",
-      "current_price": 3.454e-8,
-      "total_volume": 23920.47539258901,
+      "current_price": 0.022126,
+      "total_volume": 574006,
       "evidence_keywords": [
         "\\bstake\\b",
         "\\bstaking\\b",
-        "\\bearn\\b"
+        "\\bearn\\b",
+        "\\byield\\b",
+        "\\breward(s)?\\b"
       ]
     },
     {
@@ -36,8 +85,8 @@
       "homepage": "https://www.zama.org/",
       "staking_url": "https://www.zama.org/",
       "listed_at": "2026-02-02",
-      "current_price": 0.02797,
-      "total_volume": 1218903.78188,
+      "current_price": 0.02204,
+      "total_volume": 1040035.3881,
       "evidence_keywords": [
         "\\bstake\\b",
         "\\bstaking\\b",
@@ -52,8 +101,8 @@
       "homepage": "https://infinex.xyz/",
       "staking_url": "https://infinex.xyz/",
       "listed_at": "2026-01-31",
-      "current_price": 0.01168,
-      "total_volume": 514798.13575,
+      "current_price": 0.01368,
+      "total_volume": 734187.91062,
       "evidence_keywords": [
         "\\bearn\\b",
         "\\byield\\b",
@@ -61,18 +110,121 @@
       ]
     },
     {
-      "symbol": "BTGOON",
-      "name": "BitGo Holdings Ondo Tokenized",
-      "homepage": "https://ondo.finance/",
-      "staking_url": "https://ondo.finance/",
-      "listed_at": "2026-01-26",
-      "current_price": 11.594,
-      "total_volume": 9628.82087,
+      "symbol": "GWEI",
+      "name": "ETHGas",
+      "homepage": "https://www.ethgas.com/",
+      "staking_url": "https://www.ethgas.com/",
+      "listed_at": "2026-01-21",
+      "current_price": 0.0326,
+      "total_volume": 633333.00227,
       "evidence_keywords": [
+        "\\bstake\\b",
+        "\\bstaking\\b",
+        "\\bvalidator\\b",
+        "\\bearn\\b",
+        "\\byield\\b"
+      ]
+    },
+    {
+      "symbol": "ACU",
+      "name": "Acurast",
+      "homepage": "https://acurast.com/",
+      "staking_url": "https://acurast.com/",
+      "listed_at": "2026-01-21",
+      "current_price": 0.11543,
+      "total_volume": 453036.222167,
+      "evidence_keywords": [
+        "\\bstake\\b",
+        "\\bstaking\\b",
+        "\\bstaked\\b",
+        "\\bdelegation\\b",
+        "\\breward(s)?\\b"
+      ]
+    },
+    {
+      "symbol": "FOGO",
+      "name": "Fogo",
+      "homepage": "https://www.fogo.io/",
+      "staking_url": "https://www.fogo.io/",
+      "listed_at": "2026-01-15",
+      "current_price": 0.02826,
+      "total_volume": 2874087.58158,
+      "evidence_keywords": [
+        "\\bstaking\\b",
         "\\bearn\\b",
         "\\byield\\b",
-        "\\breward(s)?\\b",
-        "\\bapy\\b"
+        "\\breward(s)?\\b"
+      ]
+    },
+    {
+      "symbol": "FUN",
+      "name": "Sport.Fun",
+      "homepage": "https://www.sport.fun/",
+      "staking_url": "https://www.sport.fun/",
+      "listed_at": "2026-01-15",
+      "current_price": 0.04909,
+      "total_volume": 1150392.97764,
+      "evidence_keywords": [
+        "\\bearn\\b",
+        "\\breward(s)?\\b"
+      ]
+    },
+    {
+      "symbol": "U",
+      "name": "United Stables",
+      "homepage": "https://u.tech/",
+      "staking_url": "https://u.tech/",
+      "listed_at": "2026-01-13",
+      "current_price": 0.9985,
+      "total_volume": 7423.91091,
+      "evidence_keywords": [
+        "\\bstaking\\b",
+        "\\byield\\b",
+        "\\breward(s)?\\b"
+      ]
+    },
+    {
+      "symbol": "DN",
+      "name": "DeepNode",
+      "homepage": "https://deepnode.ai/",
+      "staking_url": "https://deepnode.ai/",
+      "listed_at": "2026-01-10",
+      "current_price": 0.1509,
+      "total_volume": 35811.13595,
+      "evidence_keywords": [
+        "\\bstaking\\b",
+        "\\bvalidator\\b",
+        "\\bearn\\b",
+        "\\breward(s)?\\b"
+      ]
+    },
+    {
+      "symbol": "ZTC",
+      "name": "Zenchain",
+      "homepage": "https://www.zenchain.io/",
+      "staking_url": "https://www.zenchain.io/",
+      "listed_at": "2026-01-07",
+      "current_price": 0.001227,
+      "total_volume": 18729.709439,
+      "evidence_keywords": [
+        "\\bstake\\b",
+        "\\bstaking\\b",
+        "\\bstaked\\b",
+        "\\bearn\\b",
+        "\\breward(s)?\\b"
+      ]
+    },
+    {
+      "symbol": "BTG",
+      "name": "Openverse Network",
+      "homepage": "https://www.openverse.network/",
+      "staking_url": "https://www.openverse.network/",
+      "listed_at": "2026-01-02",
+      "current_price": 3.512,
+      "total_volume": 14193.8929,
+      "evidence_keywords": [
+        "\\bstaking\\b",
+        "\\bvalidator\\b"
       ]
     }
   ]

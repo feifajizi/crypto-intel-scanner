@@ -1,9 +1,9 @@
 #!/usr/bin/env node
 /**
- * Gate 新上币质押扫描（Puppeteer 浏览器版）
+ * Gate 新上币质押扫描（API + HTTP 版，无 Puppeteer）
  * - 拉取 Gate 最近 100 个新上币
  * - 去掉 Meme 和 RWA/股票代币
- * - 用 Puppeteer 抓取 Gate 页面官网链接
+ * - 用 Gate API 获取官网链接（快速，无浏览器）
  * - 扫描官网是否有 staking/earn
  * - 输出可质押币种列表
  */
@@ -11,7 +11,6 @@
 import { fileURLToPath } from 'node:url';
 import { dirname, join } from 'node:path';
 import fs from 'node:fs';
-import puppeteer from 'puppeteer';
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = dirname(__filename);
@@ -57,8 +56,8 @@ function filterMemeAndRwa(coins) {
   ];
   
   const LEVERAGED_PATTERNS = [
-    /3[LS]$/i, // 3L/3S suffix
-    /5[LS]$/i, // 5L/5S suffix
+    /3[LS]$/i,
+    /5[LS]$/i,
   ];
   
   const filtered = coins.filter(c => {
@@ -73,68 +72,46 @@ function filterMemeAndRwa(coins) {
   return filtered;
 }
 
-async function scrapeGateHomepage(page, symbol) {
-  try {
-    const url = `https://www.gate.io/zh/trade/${symbol}_USDT`;
-    console.log(`    Opening ${url}...`);
-    
-    await page.goto(url, { waitUntil: 'domcontentloaded', timeout: 20000 });
-    await sleep(3000); // Wait for dynamic content
-    
-    // Click "币种信息" tab - use more robust selector
-    const clicked = await page.evaluate(() => {
-      const tabs = Array.from(document.querySelectorAll('*'));
-      const coinInfoTab = tabs.find(el => {
-        const text = el.textContent || '';
-        const role = el.getAttribute('role');
-        return role === 'tab' && text.includes('币种信息');
-      });
-      if (coinInfoTab) {
-        coinInfoTab.click();
-        return true;
-      }
-      return false;
-    });
-    
-    if (clicked) {
-      await sleep(2000); // Wait for tab content to load
+const FAKE_HOMEPAGES = ['bitcoin.org', 'ethereum.org', 'example.com', 'tether.to'];
+
+async function fetchJson(url, retries = 2) {
+  for (let i = 0; i < retries; i++) {
+    try {
+      const resp = await fetch(url, { signal: AbortSignal.timeout(15000) });
+      if (!resp.ok) return null;
+      return await resp.json();
+    } catch {
+      if (i < retries - 1) await sleep(2000);
     }
-    
-    // Extract homepage link
-    const homepage = await page.evaluate(() => {
-      // Look for "官网" button/link
-      const links = Array.from(document.querySelectorAll('a'));
-      const homepageLink = links.find(a => {
-        const text = a.textContent || '';
-        return text.includes('官网') && a.href && !a.href.includes('gate.io');
-      });
-      return homepageLink?.href || null;
-    });
-    
-    // Filter out fake/placeholder homepages
-    const FAKE_HOMEPAGES = [
-      'bitcoin.org',
-      'ethereum.org',
-      'example.com',
-      'tether.to',
-    ];
-    
-    const isFake = homepage && FAKE_HOMEPAGES.some(fake => homepage.includes(fake));
-    const validHomepage = isFake ? null : homepage;
-    
-    if (validHomepage) {
-      console.log(`    ✅ Found: ${validHomepage}`);
-    } else if (isFake) {
-      console.log(`    ⚠️  Fake homepage (${homepage}), ignored`);
-    } else {
-      console.log(`    ❌ No homepage`);
-    }
-    
-    return validHomepage;
-  } catch (err) {
-    console.log(`    ⚠️  Error: ${err.message}`);
-    return null;
   }
+  return null;
+}
+
+async function getHomepageViaAPI(symbol) {
+  // Step 1: Get gate_id from symbol
+  const seoData = await fetchJson(
+    `https://www.gate.com/api-price/api/global/price/getGlobalSeoPath?short_name=${symbol}`
+  );
+  const gateId = seoData?.data?.[0]?.gate_id;
+  if (!gateId) return { homepage: null, twitter: null };
+
+  // Step 2: Get coin report which contains homepage in HTML
+  const reportData = await fetchJson(
+    `https://www.gate.com/api-price/api/inner/v3/detail/getCoinReport?seo_path=${gateId}&lang=zh`
+  );
+  const report = reportData?.data?.report;
+  if (!report) return { homepage: null, twitter: null };
+
+  // Extract 官网 URL from HTML report
+  const match = report.match(/官网[：:]\s*(?:<\/span>)?<a href="([^"]+)"/);
+  let homepage = match?.[1] || null;
+  if (homepage && FAKE_HOMEPAGES.some(fake => homepage.includes(fake))) homepage = null;
+
+  // Extract Twitter from report
+  const twMatch = report.match(/twitter\.com\/([a-zA-Z0-9_]+)|x\.com\/([a-zA-Z0-9_]+)/i);
+  const twitter = twMatch ? (twMatch[1] || twMatch[2]) : null;
+
+  return { homepage, twitter };
 }
 
 async function scanStake(homepage) {
@@ -171,7 +148,8 @@ async function sleep(ms) {
 }
 
 async function main() {
-  console.log('=== Gate Staking Scanner (Puppeteer Edition) ===\n');
+  console.log('=== Gate Staking Scanner (API Edition) ===\n');
+  const startTime = Date.now();
   
   // Step 1: Get latest coins
   const coins = await getLatestCoins(100);
@@ -179,34 +157,30 @@ async function main() {
   // Step 2: Filter
   const filtered = filterMemeAndRwa(coins);
   
-  // Step 3: Launch browser
-  console.log(`[3/5] Launching Puppeteer browser...`);
-  const browser = await puppeteer.launch({
-    headless: true,
-    args: ['--no-sandbox', '--disable-setuid-sandbox'],
-  });
-  
-  const page = await browser.newPage();
-  await page.setUserAgent('Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36');
-  
-  console.log(`[3/5] Scraping homepages from Gate pages (${filtered.length} coins, ~5-10 min)...`);
+  // Step 3: Get homepages via Gate API (fast, no browser needed)
+  console.log(`[3/5] Fetching homepages via Gate API (${filtered.length} coins)...`);
   const enriched = [];
   
+  // Collect enrichment data for coin_enrichment.json
+  const enrichmentData = {};
+
   for (let i = 0; i < filtered.length; i++) {
     const c = filtered[i];
-    console.log(`  [${i + 1}/${filtered.length}] ${c.symbol}...`);
+    const { homepage, twitter } = await getHomepageViaAPI(c.symbol);
     
-    const homepage = await scrapeGateHomepage(page, c.symbol);
-    enriched.push({
-      ...c,
-      homepage,
-    });
+    if (homepage) {
+      console.log(`  [${i + 1}/${filtered.length}] ${c.symbol} ✅ ${homepage}${twitter ? ` (@${twitter})` : ''}`);
+      // Collect enrichment for ALL coins with homepage (not just staking)
+      enrichmentData[c.symbol] = { homepage, ...(twitter ? { twitter_screen_name: twitter } : {}) };
+    } else {
+      console.log(`  [${i + 1}/${filtered.length}] ${c.symbol} ❌`);
+    }
     
-    // Rate limit: 2s between scrapes
-    await sleep(2000);
+    enriched.push({ ...c, homepage });
+    
+    // Light rate limit
+    await sleep(300);
   }
-  
-  await browser.close();
   
   const withHomepage = enriched.filter(c => c.homepage);
   console.log(`\n[4/5] Found ${withHomepage.length} coins with homepage. Scanning for staking...`);
@@ -219,13 +193,12 @@ async function main() {
     
     const scanRes = await scanStake(c.homepage);
     if (scanRes?.found) {
-      // Use evidence_url (the actual staking page) instead of homepage
       const stakingUrl = scanRes.evidence?.url || c.homepage;
       results.push({
         symbol: c.symbol,
         name: c.name,
         homepage: c.homepage,
-        staking_url: stakingUrl, // This is the actual staking page
+        staking_url: stakingUrl,
         listed_at: c.listed_at,
         current_price: c.current_price,
         total_volume: c.total_volume,
@@ -236,26 +209,59 @@ async function main() {
       console.log(`    ❌ not found`);
     }
     
-    // Rate limit: 2s between scans
-    await sleep(2000);
+    await sleep(1000);
   }
   
   // Step 5: Output
   console.log(`\n[5/5] Writing results...`);
   
   const outPath = join(__dirname, '..', 'src', 'data', 'gate_stake_auto.json');
+  
+  // Cumulative merge: keep old results, add/update new ones
+  let existingResults = [];
+  try {
+    const existing = JSON.parse(fs.readFileSync(outPath, 'utf-8'));
+    existingResults = existing.results || [];
+  } catch {}
+  
+  const merged = new Map();
+  for (const r of existingResults) merged.set(r.symbol, r);
+  for (const r of results) merged.set(r.symbol, r);
+  const mergedResults = Array.from(merged.values());
+  
   const output = {
     generated_at: new Date().toISOString(),
-    source: 'Gate.io latest 100 (filtered: no meme/rwa, Puppeteer-scraped)',
+    source: 'Gate.io latest 100 (filtered: no meme/rwa, API-based)',
     total_scanned: withHomepage.length,
-    found_count: results.length,
-    results,
+    found_count: mergedResults.length,
+    results: mergedResults,
   };
   
   fs.mkdirSync(join(__dirname, '..', 'src', 'data'), { recursive: true });
   fs.writeFileSync(outPath, JSON.stringify(output, null, 2), 'utf-8');
   
-  console.log(`\n=== Gate Staking Opportunities (${results.length}) ===`);
+  // === Write coin_enrichment.json (cumulative merge) ===
+  const enrichmentPath = join(__dirname, '..', 'api', 'coin_enrichment.json');
+  let existingEnrichment = {};
+  try {
+    existingEnrichment = JSON.parse(fs.readFileSync(enrichmentPath, 'utf-8'));
+  } catch {}
+  
+  // Merge: old data + new data (new overwrites old per symbol)
+  for (const [symbol, data] of Object.entries(enrichmentData)) {
+    existingEnrichment[symbol] = {
+      ...(existingEnrichment[symbol] || {}),
+      ...data,
+      last_scanned: new Date().toISOString(),
+    };
+  }
+  
+  fs.mkdirSync(join(__dirname, '..', 'api'), { recursive: true });
+  fs.writeFileSync(enrichmentPath, JSON.stringify(existingEnrichment, null, 2), 'utf-8');
+  console.log(`Wrote: ${enrichmentPath} (${Object.keys(existingEnrichment).length} coins)`);
+  
+  const elapsed = ((Date.now() - startTime) / 1000).toFixed(0);
+  console.log(`\n=== Gate Staking Opportunities (${results.length} new, ${mergedResults.length} total) ===`);
   results.forEach((r, i) => {
     console.log(`${i + 1}. ${r.symbol} (${r.name})`);
     console.log(`   Staking URL: ${r.staking_url}`);
@@ -263,6 +269,7 @@ async function main() {
   });
   
   console.log(`\nWrote: ${outPath}`);
+  console.log(`Total time: ${elapsed}s`);
 }
 
 main().catch(e => {

@@ -1,7 +1,7 @@
 import { Header } from '@/components/Header';
 import { Hero } from '@/components/Hero';
 import { CoinList } from '@/components/CoinList';
-import { MerklRewards } from '@/components/MerklRewards';
+import { TwitterMonitor } from '@/components/TwitterMonitor';
 import { Footer } from '@/components/Footer';
 import { Toaster } from '@/components/ui/sonner';
 
@@ -22,11 +22,11 @@ function App() {
           </div>
         </section>
         
-        {/* Merkl Rewards Section */}
-        <section id="merkl" className="py-20 relative">
+        {/* Twitter Monitor Section */}
+        <section id="twitter" className="py-20 relative">
           <div className="absolute inset-0 bg-gradient-to-b from-slate-950 via-purple-900/10 to-slate-950" />
           <div className="relative z-10 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-            <MerklRewards />
+            <TwitterMonitor />
           </div>
         </section>
         
@@ -56,11 +56,11 @@ function App() {
               
               <div className="bg-slate-900/50 backdrop-blur-sm rounded-xl p-6 border border-slate-800/50 hover:border-purple-500/30 transition-all">
                 <div className="w-12 h-12 bg-purple-500/20 rounded-lg flex items-center justify-center mb-4">
-                  <span className="text-2xl">🎯</span>
+                  <span className="text-2xl">🐦</span>
                 </div>
-                <h3 className="text-lg font-semibold text-white mb-2">Merkl 集成</h3>
+                <h3 className="text-lg font-semibold text-white mb-2">推特监控</h3>
                 <p className="text-slate-400 text-sm">
-                  实时监测 Merkl 平台的 DeFi 奖励机会，包括每日奖励、TVL、APR 等关键信息。
+                  实时监控 DeFi 领域关键人物推文，第一时间获取重要信息和机会。
                 </p>
               </div>
               

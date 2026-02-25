@@ -23,28 +23,17 @@ export interface Coin {
   homepage?: string;
   twitter_screen_name?: string;
 
+  // 质押信息（来自离线扫描）
+  staking?: {
+    url?: string;
+    apy?: string;
+    confidence?: string;
+    evidence?: string;
+  };
+
   // 合约信息（用于人工 override / 校验）
   token_network?: string;
   token_address?: string;
-}
-
-// Merkl奖励数据类型
-export interface MerklReward {
-  id: string;
-  opportunityId: string;
-  opportunityName: string;
-  protocol: string;
-  chainId: number;
-  chainName: string;
-  tokenSymbol: string;
-  tokenAddress: string;
-  dailyRewards: number;
-  tvl: number;
-  apr: number;
-  startTimestamp: number;
-  endTimestamp: number;
-  status: 'active' | 'ended' | 'upcoming';
-  merklUrl?: string; // 正确的Merkl链接
 }
 
 // 扫描结果类型
