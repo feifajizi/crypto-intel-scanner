@@ -72,9 +72,28 @@ export function TwitterMonitor() {
     }
   };
 
-  const truncateText = (text: string, maxLength: number = 280) => {
-    if (text.length <= maxLength) return text;
-    return text.substring(0, maxLength) + '...';
+  // 将推文文本中的 URL 转换为可点击链接
+  const renderTextWithLinks = (text: string) => {
+    const urlRegex = /(https?:\/\/[^\s]+)/g;
+    const parts = text.split(urlRegex);
+    
+    return parts.map((part, index) => {
+      if (part.match(urlRegex)) {
+        return (
+          <a
+            key={index}
+            href={part}
+            target="_blank"
+            rel="noopener noreferrer"
+            className="text-blue-400 hover:text-blue-300 hover:underline transition-colors"
+            onClick={(e) => e.stopPropagation()}
+          >
+            {part}
+          </a>
+        );
+      }
+      return <span key={index}>{part}</span>;
+    });
   };
 
   const renderMediaGrid = (mediaUrls: string[], tweetId: string) => {
@@ -103,7 +122,7 @@ export function TwitterMonitor() {
               src={url}
               alt={`Media ${idx + 1}`}
               className={`w-full object-cover transition-transform group-hover:scale-105 ${
-                count === 1 ? 'h-64' : count === 3 && idx === 0 ? 'h-48' : 'h-32'
+                count === 1 ? 'h-auto max-h-[600px]' : 'h-64'
               }`}
             />
             <div className="absolute inset-0 bg-black/0 group-hover:bg-black/10 transition-colors" />
@@ -246,9 +265,9 @@ export function TwitterMonitor() {
 
               <CardContent className="pt-0">
                 {/* Tweet Text */}
-                <p className="text-slate-200 whitespace-pre-wrap leading-relaxed">
-                  {truncateText(tweet.text)}
-                </p>
+                <div className="text-slate-200 whitespace-pre-wrap leading-relaxed">
+                  {renderTextWithLinks(tweet.text)}
+                </div>
                 
                 {/* Media Grid */}
                 {renderMediaGrid(tweet.media_urls, tweet.id)}
