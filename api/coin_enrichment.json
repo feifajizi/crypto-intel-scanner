@@ -54,7 +54,8 @@
       "apy": null,
       "confidence": "low",
       "evidence": "homepage: staking"
-    }
+    },
+    "image": "https://coin-images.coingecko.com/coins/images/70945/small/superform.png?1764747920"
   },
   "RNBW": {
     "symbol": "RNBW",
@@ -66,7 +67,8 @@
     ],
     "homepage": "https://rainbow.me/",
     "twitter_screen_name": "christianbaroni",
-    "last_scanned": "2026-02-25T12:27:46.688Z"
+    "last_scanned": "2026-02-25T12:27:46.688Z",
+    "image": "https://coin-images.coingecko.com/coins/images/69445/small/RNBW-200px.png?1770053251"
   },
   "BIRB": {
     "symbol": "BIRB",
@@ -78,7 +80,8 @@
     ],
     "homepage": "https://moonbirds.com/",
     "twitter_screen_name": "spencer",
-    "last_scanned": "2026-02-25T12:27:46.688Z"
+    "last_scanned": "2026-02-25T12:27:46.688Z",
+    "image": "https://coin-images.coingecko.com/coins/images/69732/small/birb-logo.jpg?1759413928"
   },
   "ZAMA": {
     "symbol": "ZAMA",
