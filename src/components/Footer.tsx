@@ -6,8 +6,8 @@ export function Footer() {
   const footerLinks = {
     product: [
       { label: '币种列表', href: '#coins' },
-      { label: 'Merkl奖励', href: '#merkl' },
-      { label: 'API文档', href: '#' },
+      { label: '股票费率', href: '#tradfi-funding' },
+      { label: '推特监控', href: '#twitter' },
     ],
     resources: [
       { label: '使用教程', href: '#' },
