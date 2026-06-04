@@ -26,6 +26,7 @@ const STOCK_BASES = new Set([
 ]);
 
 function toNum(v) {
+  if (v === null || v === undefined || v === '') return null;
   const n = Number(v);
   return Number.isFinite(n) ? n : null;
 }
@@ -292,14 +293,31 @@ function inferIntervalHoursFromFundingHistory(rows) {
   return diffs[Math.floor(diffs.length / 2)];
 }
 
+function inferCurrentIntervalHoursFromFundingHistory(rows, nextFundingTime) {
+  const next = toNum(nextFundingTime);
+  if (!Array.isArray(rows) || !next) return inferIntervalHoursFromFundingHistory(rows);
+  const prev = rows
+    .map((x) => toNum(x?.fundingTime))
+    .filter((x) => x !== null && x < next)
+    .sort((a, b) => b - a)[0];
+  if (prev) {
+    const h = Math.round(((next - prev) / 3600000) * 100) / 100;
+    if (h > 0 && h <= 24) return h;
+  }
+  return inferIntervalHoursFromFundingHistory(rows);
+}
+
 async function asterRows() {
   const [premium, info] = await Promise.all([fetchJson(ASTER_PREMIUM), fetchJson(ASTER_EXCHANGE_INFO)]);
   const premiumBySymbol = new Map((Array.isArray(premium) ? premium : []).map((p) => [p.symbol, p]));
   const symbols = Array.isArray(info?.symbols) ? info.symbols : [];
   const stockSymbols = symbols.filter((s) => s?.status === 'TRADING' && STOCK_BASES.has(baseFromLinearSymbol(s.symbol)));
-  const intervalList = await Promise.all(stockSymbols.map((s) => fetchJson(`https://fapi.asterdex.com/fapi/v1/fundingRate?symbol=${encodeURIComponent(s.symbol)}&limit=6`)
-    .then((hist) => ({ symbol: s.symbol, intervalHours: inferIntervalHoursFromFundingHistory(hist) }))
-    .catch(() => ({ symbol: s.symbol, intervalHours: null }))));
+  const intervalList = await Promise.all(stockSymbols.map((s) => {
+    const p = premiumBySymbol.get(s.symbol) || {};
+    return fetchJson(`https://fapi.asterdex.com/fapi/v1/fundingRate?symbol=${encodeURIComponent(s.symbol)}&limit=12`)
+      .then((hist) => ({ symbol: s.symbol, intervalHours: inferCurrentIntervalHoursFromFundingHistory(hist, p.nextFundingTime) }))
+      .catch(() => ({ symbol: s.symbol, intervalHours: null }));
+  }));
   const intervalBySymbol = new Map(intervalList.map((x) => [x.symbol, x.intervalHours]));
 
   return stockSymbols.map((s) => {
@@ -333,7 +351,7 @@ async function lighterRows() {
         exchange: 'Lighter',
         symbol: m.symbol,
         base: m.symbol,
-        rate: toNum(f.rate) === null ? null : toNum(f.rate) / 100,
+        rate: f.rate,
         intervalHours: 1,
         nextFundingTime: null,
         markPrice: m.last_trade_price,
