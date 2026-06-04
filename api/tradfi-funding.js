@@ -275,29 +275,50 @@ async function hyperliquidRows() {
     }));
 }
 
+
+function inferIntervalHoursFromFundingHistory(rows) {
+  if (!Array.isArray(rows) || rows.length < 2) return null;
+  const times = rows
+    .map((x) => toNum(x?.fundingTime))
+    .filter((x) => x !== null)
+    .sort((a, b) => a - b);
+  const diffs = [];
+  for (let i = 1; i < times.length; i += 1) {
+    const h = Math.round(((times[i] - times[i - 1]) / 3600000) * 100) / 100;
+    if (h > 0 && h <= 24) diffs.push(h);
+  }
+  if (!diffs.length) return null;
+  diffs.sort((a, b) => a - b);
+  return diffs[Math.floor(diffs.length / 2)];
+}
+
 async function asterRows() {
   const [premium, info] = await Promise.all([fetchJson(ASTER_PREMIUM), fetchJson(ASTER_EXCHANGE_INFO)]);
   const premiumBySymbol = new Map((Array.isArray(premium) ? premium : []).map((p) => [p.symbol, p]));
   const symbols = Array.isArray(info?.symbols) ? info.symbols : [];
-  return symbols
-    .filter((s) => s?.status === 'TRADING' && STOCK_BASES.has(baseFromLinearSymbol(s.symbol)))
-    .map((s) => {
-      const p = premiumBySymbol.get(s.symbol) || {};
-      return row({
-        exchange: 'AsterDEX',
-        symbol: s.symbol,
-        base: s.baseAsset || baseFromLinearSymbol(s.symbol),
-        rate: p.lastFundingRate,
-        intervalHours: 1,
-        nextFundingTime: p.nextFundingTime,
-        markPrice: p.markPrice,
-        indexPrice: p.indexPrice,
-        lastPrice: p.markPrice,
-        openInterest: null,
-        maxLeverage: null,
-        url: `https://www.asterdex.com/en/futures/${encodeURIComponent(s.symbol)}`,
-      });
+  const stockSymbols = symbols.filter((s) => s?.status === 'TRADING' && STOCK_BASES.has(baseFromLinearSymbol(s.symbol)));
+  const intervalList = await Promise.all(stockSymbols.map((s) => fetchJson(`https://fapi.asterdex.com/fapi/v1/fundingRate?symbol=${encodeURIComponent(s.symbol)}&limit=6`)
+    .then((hist) => ({ symbol: s.symbol, intervalHours: inferIntervalHoursFromFundingHistory(hist) }))
+    .catch(() => ({ symbol: s.symbol, intervalHours: null }))));
+  const intervalBySymbol = new Map(intervalList.map((x) => [x.symbol, x.intervalHours]));
+
+  return stockSymbols.map((s) => {
+    const p = premiumBySymbol.get(s.symbol) || {};
+    return row({
+      exchange: 'AsterDEX',
+      symbol: s.symbol,
+      base: s.baseAsset || baseFromLinearSymbol(s.symbol),
+      rate: p.lastFundingRate,
+      intervalHours: intervalBySymbol.get(s.symbol) || 8,
+      nextFundingTime: p.nextFundingTime,
+      markPrice: p.markPrice,
+      indexPrice: p.indexPrice,
+      lastPrice: p.markPrice,
+      openInterest: null,
+      maxLeverage: null,
+      url: `https://www.asterdex.com/en/futures/${encodeURIComponent(s.symbol)}`,
     });
+  });
 }
 
 async function lighterRows() {
@@ -312,7 +333,7 @@ async function lighterRows() {
         exchange: 'Lighter',
         symbol: m.symbol,
         base: m.symbol,
-        rate: f.rate,
+        rate: toNum(f.rate) === null ? null : toNum(f.rate) / 100,
         intervalHours: 1,
         nextFundingTime: null,
         markPrice: m.last_trade_price,
