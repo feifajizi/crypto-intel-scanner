@@ -2,6 +2,7 @@
 // Historical funding rates for TradFi equity perpetuals.
 
 function toNum(v) {
+  if (v === null || v === undefined || v === '') return null;
   const n = Number(v);
   return Number.isFinite(n) ? n : null;
 }
@@ -68,6 +69,38 @@ async function binanceHistory(symbol, limit) {
   return (Array.isArray(rows) ? rows : []).map((x) => ({ time: iso(x.fundingTime), rate: x.fundingRate, markPrice: x.markPrice }));
 }
 
+async function asterHistory(symbol, limit) {
+  const url = `https://fapi.asterdex.com/fapi/v1/fundingRate?symbol=${encodeURIComponent(symbol)}&limit=${limit}`;
+  const rows = await fetchJson(url);
+  return (Array.isArray(rows) ? rows : []).map((x) => ({ time: iso(x.fundingTime), rate: x.fundingRate, markPrice: null }));
+}
+
+async function postJson(url, body, timeoutMs = 12000) {
+  const ctrl = new AbortController();
+  const t = setTimeout(() => ctrl.abort(), timeoutMs);
+  try {
+    const resp = await fetch(url, {
+      method: 'POST',
+      signal: ctrl.signal,
+      headers: { accept: 'application/json', 'content-type': 'application/json' },
+      body: JSON.stringify(body),
+    });
+    if (!resp.ok) throw new Error(`HTTP ${resp.status}`);
+    return await resp.json();
+  } finally {
+    clearTimeout(t);
+  }
+}
+
+async function grvtHistory(symbol, limit) {
+  const json = await postJson('https://market-data.grvt.io/lite/v1/funding', { i: symbol, l: limit });
+  return (Array.isArray(json?.r) ? json.r : []).map((x) => ({
+    time: iso(toNum(x.ft) === null ? null : toNum(x.ft) / 1000000),
+    rate: toNum(x.fr) === null ? null : toNum(x.fr) / 100,
+    markPrice: x.mp,
+  }));
+}
+
 export default async function handler(req, res) {
   res.setHeader('Access-Control-Allow-Origin', '*');
   res.setHeader('Access-Control-Allow-Methods', 'GET, OPTIONS');
@@ -76,7 +109,7 @@ export default async function handler(req, res) {
 
   try {
     const exchange = String(req.query?.exchange || '').trim().toLowerCase();
-    const symbol = String(req.query?.symbol || '').trim().toUpperCase();
+    const symbol = String(req.query?.symbol || '').trim();
     const limit = Math.min(Math.max(toNum(req.query?.limit) || 60, 1), 100);
     const intervalHours = toNum(req.query?.intervalHours) || 8;
 
@@ -86,6 +119,10 @@ export default async function handler(req, res) {
     if (exchange === 'gate') raw = await gateHistory(symbol, limit);
     else if (exchange === 'bybit') raw = await bybitHistory(symbol, limit);
     else if (exchange === 'binance') raw = await binanceHistory(symbol, limit);
+    else if (exchange === 'asterdex' || exchange === 'aster') raw = await asterHistory(symbol, limit);
+    else if (exchange === 'grvt') raw = await grvtHistory(symbol, limit);
+    else if (exchange === 'lighter') return res.status(501).json({ error: 'Lighter 官方公开 REST 目前只提供当前 funding rates，未公开历史资金费率接口' });
+    else if (exchange === 'variational') return res.status(501).json({ error: 'Variational 公开 /metadata/stats 目前只提供当前 funding_rate，未公开历史资金费率接口' });
     else return res.status(400).json({ error: 'unsupported exchange' });
 
     const data = normalize(raw, intervalHours).slice(0, limit);
