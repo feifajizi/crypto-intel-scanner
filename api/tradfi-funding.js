@@ -342,7 +342,7 @@ async function grvtRows() {
       exchange: 'GRVT',
       symbol: i.i,
       base: i.b,
-      rate: f.fr,
+      rate: toNum(f.fr) === null ? null : toNum(f.fr) / 100,
       intervalHours: f.fi || i.fi,
       nextFundingTime: null,
       markPrice: f.mp,
