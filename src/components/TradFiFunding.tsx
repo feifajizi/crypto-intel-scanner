@@ -5,7 +5,7 @@ import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 
 interface FundingRow {
-  exchange: 'Gate' | 'Bybit' | 'Binance' | string;
+  exchange: 'Gate' | 'Bybit' | 'Binance' | 'OKX' | 'Bitget' | 'Hyperliquid' | 'AsterDEX' | 'Lighter' | 'Variational' | 'GRVT' | string;
   symbol: string;
   base: string;
   fundingRate: number | null;
@@ -34,7 +34,7 @@ interface ApiResp {
 
 type SortKey = 'absAnnualizedPct' | 'annualizedPct' | 'fundingRatePct' | 'base' | 'exchange';
 
-const EXCHANGES = ['Gate', 'Bybit', 'Binance'];
+const EXCHANGES = ['Gate', 'Bybit', 'Binance', 'OKX', 'Bitget', 'Hyperliquid', 'AsterDEX', 'Lighter', 'Variational', 'GRVT'];
 
 function fmtPct(v: number | null | undefined, digits = 3) {
   if (v === null || v === undefined || !Number.isFinite(v)) return '-';
@@ -64,7 +64,15 @@ function fmtTime(v: string | null | undefined) {
 function exchangeColor(exchange: string) {
   if (exchange === 'Gate') return 'bg-blue-500/15 text-blue-300 border-blue-500/30';
   if (exchange === 'Bybit') return 'bg-orange-500/15 text-orange-300 border-orange-500/30';
-  return 'bg-yellow-500/15 text-yellow-300 border-yellow-500/30';
+  if (exchange === 'Binance') return 'bg-yellow-500/15 text-yellow-300 border-yellow-500/30';
+  if (exchange === 'OKX') return 'bg-white/10 text-slate-100 border-white/20';
+  if (exchange === 'Bitget') return 'bg-emerald-500/15 text-emerald-300 border-emerald-500/30';
+  if (exchange === 'Hyperliquid') return 'bg-teal-500/15 text-teal-300 border-teal-500/30';
+  if (exchange === 'AsterDEX') return 'bg-violet-500/15 text-violet-300 border-violet-500/30';
+  if (exchange === 'Lighter') return 'bg-sky-500/15 text-sky-300 border-sky-500/30';
+  if (exchange === 'Variational') return 'bg-fuchsia-500/15 text-fuchsia-300 border-fuchsia-500/30';
+  if (exchange === 'GRVT') return 'bg-lime-500/15 text-lime-300 border-lime-500/30';
+  return 'bg-slate-500/15 text-slate-300 border-slate-500/30';
 }
 
 export function TradFiFunding() {
@@ -148,7 +156,7 @@ export function TradFiFunding() {
             股票合约 <span className="text-cyan-400">资金费率</span>
           </h2>
           <p className="text-slate-400 mt-3 max-w-2xl">
-            只筛股票/ETF 类 TradFi 永续，覆盖 Gate、Bybit、Binance；正费率做空收，负费率做多收。
+            只筛股票/ETF 类 TradFi 永续，覆盖 Gate、Bybit、Binance、OKX、Bitget、Hyperliquid、AsterDEX、Lighter、Variational、GRVT；正费率做空收，负费率做多收。
           </p>
         </div>
         <Button onClick={load} disabled={loading || selectedExchanges.length === 0} className="bg-cyan-500 hover:bg-cyan-400 text-slate-950 font-semibold">
