@@ -1,4 +1,4 @@
-import { useMemo, useState } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 import type { Coin } from '@/types';
 import { useCoins, useCoinSearch } from '@/hooks/useCoins';
 import { dataService } from '@/services/api';
@@ -6,16 +6,34 @@ import { Card, CardContent } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
 import { Badge } from '@/components/ui/badge';
 import { Skeleton } from '@/components/ui/skeleton';
-import { TrendingUp, TrendingDown, Search, Twitter, Globe, RefreshCw } from 'lucide-react';
+import { TrendingUp, TrendingDown, Search, Twitter, Globe, RefreshCw, Star } from 'lucide-react';
 import { ExternalLink } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 
 import { Switch } from '@/components/ui/switch';
 import { Label } from '@/components/ui/label';
 
-function CoinCard({ coin, index }: { coin: Coin; index: number }) {
+type StakeScanResult = {
+  found?: boolean;
+  scanned_at?: string;
+  evidence?: {
+    url?: string;
+  };
+};
+
+function CoinCard({
+  coin,
+  index,
+  isFavorite,
+  onToggleFavorite,
+}: {
+  coin: Coin;
+  index: number;
+  isFavorite: boolean;
+  onToggleFavorite: (coinId: string) => void;
+}) {
   const [scanLoading, setScanLoading] = useState(false);
-  const [scanResult, setScanResult] = useState<any>(null);
+  const [scanResult, setScanResult] = useState<StakeScanResult | null>(null);
   const [scanError, setScanError] = useState<string | null>(null);
 
   const isPositive = (coin.price_change_percentage_24h || 0) >= 0;
@@ -43,12 +61,12 @@ function CoinCard({ coin, index }: { coin: Coin; index: number }) {
         const cached = JSON.parse(cachedRaw);
         const ts = Date.parse(cached?.scanned_at || '');
         if (Number.isFinite(ts) && Date.now() - ts < 24 * 3600 * 1000) {
-          setScanResult(cached);
+          setScanResult(cached as StakeScanResult);
           return;
         }
       }
 
-      const r = await dataService.scanStake(homepageUrl, 8);
+      const r = await dataService.scanStake(homepageUrl, 8) as StakeScanResult;
       setScanResult(r);
       localStorage.setItem(cacheKey, JSON.stringify(r));
     } catch (e) {
@@ -61,9 +79,21 @@ function CoinCard({ coin, index }: { coin: Coin; index: number }) {
   return (
     <div className="group relative bg-gradient-to-br from-slate-900/50 to-slate-800/50 backdrop-blur-sm rounded-xl p-4 border border-slate-700/50 hover:border-cyan-500/50 transition-all duration-300 hover:shadow-lg hover:shadow-cyan-500/10 hover:-translate-y-1">
       <div className="flex items-center gap-4">
-        {/* 排名 */}
-        <div className="flex-shrink-0 w-8 h-8 flex items-center justify-center bg-slate-800 rounded-lg text-slate-400 text-sm font-medium">
-          {index + 1}
+        {/* 排名 + 收藏 */}
+        <div className="flex-shrink-0 flex items-center gap-2">
+          <div className="w-8 h-8 flex items-center justify-center bg-slate-800 rounded-lg text-slate-400 text-sm font-medium">
+            {index + 1}
+          </div>
+          <Button
+            onClick={() => onToggleFavorite(coin.id)}
+            variant="ghost"
+            size="icon"
+            className={`w-8 h-8 rounded-lg ${isFavorite ? 'text-amber-300 bg-amber-500/10 hover:bg-amber-500/20' : 'text-slate-500 hover:text-amber-300 hover:bg-slate-800'}`}
+            title={isFavorite ? '取消收藏' : '收藏观察'}
+            aria-label={isFavorite ? `取消收藏 ${coin.symbol}` : `收藏 ${coin.symbol}`}
+          >
+            <Star className={`w-4 h-4 ${isFavorite ? 'fill-current' : ''}`} />
+          </Button>
         </div>
         
         {/* 图标 */}
@@ -235,9 +265,32 @@ export function CoinList() {
   const [searchQuery, setSearchQuery] = useState('');
   const [excludeMeme, setExcludeMeme] = useState(true);
   const [excludeRwaStock, setExcludeRwaStock] = useState(true);
+  const [showFavoritesOnly, setShowFavoritesOnly] = useState(false);
+  const [favoriteIds, setFavoriteIds] = useState<string[]>(() => {
+    try {
+      const raw = localStorage.getItem('coin-favorites');
+      return raw ? JSON.parse(raw) : [];
+    } catch {
+      return [];
+    }
+  });
 
   const { coins, loading, error, refresh } = useCoins(100);
   const { results: searchResults, loading: searchLoading } = useCoinSearch(searchQuery);
+
+  useEffect(() => {
+    localStorage.setItem('coin-favorites', JSON.stringify(favoriteIds));
+  }, [favoriteIds]);
+
+  const favoriteSet = useMemo(() => new Set(favoriteIds), [favoriteIds]);
+
+  const toggleFavorite = (coinId: string) => {
+    setFavoriteIds(prev => (
+      prev.includes(coinId)
+        ? prev.filter(id => id !== coinId)
+        : [...prev, coinId]
+    ));
+  };
 
   const displayCoins = useMemo(() => {
     const list = searchQuery ? searchResults : coins;
@@ -270,8 +323,8 @@ export function CoinList() {
       return false;
     };
 
-    return list.filter(c => !shouldDrop(c));
-  }, [coins, searchQuery, searchResults, excludeMeme, excludeRwaStock]);
+    return list.filter(c => !shouldDrop(c) && (!showFavoritesOnly || favoriteSet.has(c.id)));
+  }, [coins, searchQuery, searchResults, excludeMeme, excludeRwaStock, showFavoritesOnly, favoriteSet]);
 
   if (error) {
     return (
@@ -311,6 +364,17 @@ export function CoinList() {
             <div className="flex items-center gap-2">
               <Switch checked={excludeRwaStock} onCheckedChange={setExcludeRwaStock} />
               <Label className="text-slate-300">去掉 RWA/股票相关</Label>
+            </div>
+            <div className="flex items-center gap-2">
+              <Switch
+                checked={showFavoritesOnly}
+                onCheckedChange={setShowFavoritesOnly}
+              />
+              <Label className="text-slate-300 flex items-center gap-1">
+                <Star className="w-3.5 h-3.5 text-amber-300 fill-current" />
+                只看收藏
+                <span className="text-slate-500">({favoriteIds.length})</span>
+              </Label>
             </div>
           </div>
         </div>
@@ -357,10 +421,8 @@ export function CoinList() {
             </p>
           </div>
           <div className="bg-slate-800/30 rounded-lg p-4 border border-slate-700/50">
-            <p className="text-slate-400 text-sm">总交易量</p>
-            <p className="text-2xl font-bold text-cyan-400">
-              ${(coins.reduce((acc, c) => acc + (c.total_volume || 0), 0) / 1e9).toFixed(1)}B
-            </p>
+            <p className="text-slate-400 text-sm">收藏观察</p>
+            <p className="text-2xl font-bold text-amber-300">{favoriteIds.length}</p>
           </div>
         </div>
       )}
@@ -375,12 +437,18 @@ export function CoinList() {
         ) : displayCoins.length > 0 ? (
           // 币种卡片
           displayCoins.map((coin, index) => (
-            <CoinCard key={coin.id} coin={coin} index={index} />
+            <CoinCard
+              key={coin.id}
+              coin={coin}
+              index={index}
+              isFavorite={favoriteSet.has(coin.id)}
+              onToggleFavorite={toggleFavorite}
+            />
           ))
         ) : (
           // 空状态
           <div className="text-center py-12">
-            <p className="text-slate-400">未找到匹配的币种</p>
+            <p className="text-slate-400">{showFavoritesOnly ? '还没有收藏币种' : '未找到匹配的币种'}</p>
           </div>
         )}
       </div>
