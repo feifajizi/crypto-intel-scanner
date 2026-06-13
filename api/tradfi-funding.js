@@ -18,6 +18,8 @@ const LIGHTER_FUNDING = 'https://mainnet.zklighter.elliot.ai/api/v1/funding-rate
 const GRVT_INSTRUMENTS = 'https://market-data.grvt.io/lite/v1/all_instruments';
 const GRVT_FUNDING = 'https://market-data.grvt.io/lite/v1/funding';
 const VARIATIONAL_STATS = 'https://omni-client-api.prod.ap-northeast-1.variational.io/metadata/stats';
+const MSX_PRODUCTS = 'https://api9528mystks.mystonks.org/api/v1/co/stock/product/page';
+const MSX_FUNDING = 'https://api9528mystks.mystonks.org/api/v1/co/fund/get';
 
 const STOCK_BASES = new Set([
   'AAPL', 'AMD', 'AMZN', 'AVGO', 'BABA', 'COIN', 'CRCL', 'GOOGL', 'GOOG', 'HOOD',
@@ -307,6 +309,34 @@ function inferCurrentIntervalHoursFromFundingHistory(rows, nextFundingTime) {
   return inferIntervalHoursFromFundingHistory(rows);
 }
 
+async function msxRows() {
+  const productsJson = await postJson(MSX_PRODUCTS, { page: 1, pageSize: 1000, coType: 1 });
+  const products = Array.isArray(productsJson?.data?.list) ? productsJson.data.list : [];
+  const fundingList = await Promise.all(products.map((p) => fetchJson(`${MSX_FUNDING}?symbol=${encodeURIComponent(p.symbol)}&coType=${encodeURIComponent(p.type || 1)}`)
+    .then((json) => ({ symbol: p.symbol, data: json?.data || null }))
+    .catch(() => ({ symbol: p.symbol, data: null }))));
+  const fundingBySymbol = new Map(fundingList.map((f) => [f.symbol, f.data]));
+
+  return products.map((p) => {
+    const f = fundingBySymbol.get(p.symbol) || {};
+    const rate = toNum(f.fundingRate);
+    return row({
+      exchange: 'MSX',
+      symbol: p.symbol,
+      base: p.symbol,
+      rate: rate === null ? null : rate / 100,
+      intervalHours: f.period || 8,
+      nextFundingTime: toNum(f.fundingTime) ? Date.now() + toNum(f.fundingTime) : null,
+      markPrice: p.price,
+      indexPrice: null,
+      lastPrice: p.price,
+      openInterest: null,
+      maxLeverage: null,
+      url: `https://www.msx.com/trade/rwa/futures/${encodeURIComponent(p.symbol)}`,
+    });
+  });
+}
+
 async function asterRows() {
   const [premium, info] = await Promise.all([fetchJson(ASTER_PREMIUM), fetchJson(ASTER_EXCHANGE_INFO)]);
   const premiumBySymbol = new Map((Array.isArray(premium) ? premium : []).map((p) => [p.symbol, p]));
@@ -425,6 +455,7 @@ const SOURCE_JOBS = {
   okx: ['OKX', okxRows],
   bitget: ['Bitget', bitgetRows],
   hyperliquid: ['Hyperliquid', hyperliquidRows],
+  msx: ['MSX', msxRows],
   asterdex: ['AsterDEX', asterRows],
   aster: ['AsterDEX', asterRows],
   lighter: ['Lighter', lighterRows],
@@ -439,7 +470,7 @@ export default async function handler(req, res) {
   if (req.method === 'OPTIONS') return res.status(204).end();
 
   try {
-    const requested = String(req.query?.exchanges || 'gate,bybit,binance,okx,bitget,hyperliquid,asterdex,lighter,variational,grvt')
+    const requested = String(req.query?.exchanges || 'gate,bybit,binance,msx,okx,bitget,hyperliquid,asterdex,lighter,variational,grvt')
       .split(',')
       .map((s) => s.trim().toLowerCase())
       .filter(Boolean);
