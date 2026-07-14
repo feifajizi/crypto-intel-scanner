@@ -17,6 +17,10 @@ function sleep(ms: number) {
   return new Promise((r) => setTimeout(r, ms))
 }
 
+function geckoUrl(path: string): string {
+  return `${GT}?path=${encodeURIComponent(path)}`
+}
+
 function num(v: unknown): number {
   if (v == null || v === '') return 0
   const n = typeof v === 'number' ? v : Number(v)
@@ -109,7 +113,7 @@ export async function fetchGeckoVolumeMap(
   const pageResults = await Promise.all(
     Array.from({ length: PAGES }, (_, i) => {
       const page = i + 1
-      const url = `${GT}/networks/${NETWORK}/pools?page=${page}&sort=h24_volume_usd_desc`
+      const url = geckoUrl(`/networks/${NETWORK}/pools?page=${page}&sort=h24_volume_usd_desc`)
       return fetchJson(url)
     }),
   )
@@ -133,7 +137,7 @@ export async function fetchGeckoByAddresses(
 
   for (let i = 0; i < uniq.length; i += MULTI_CHUNK) {
     const chunk = uniq.slice(i, i + MULTI_CHUNK)
-    const path = `${GT}/networks/${NETWORK}/pools/multi/${chunk.join(',')}`
+    const path = geckoUrl(`/networks/${NETWORK}/pools/multi/${chunk.join(',')}`)
     let { ok, json, status } = await fetchJson(path)
     // one retry on 429/empty
     if (!ok || status === 429) {

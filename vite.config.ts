@@ -94,7 +94,8 @@ function robinhoodGeckoProxy(): Plugin {
       return
     }
 
-    const path = req.url.replace(/^\/api\/rh-gecko/, '') || '/'
+    const parsed = new URL(req.url, 'http://local')
+    const path = parsed.searchParams.get('path') || req.url.replace(/^\/api\/rh-gecko/, '') || '/'
     const hit = cache.get(path)
     if (hit && hit.exp > Date.now()) {
       res.statusCode = hit.status
