@@ -18,6 +18,7 @@ export function Header() {
   const navItems = [
     { label: '币种列表', href: '#coins' },
     { label: '股票费率', href: '#tradfi-funding' },
+    { label: 'Robinhood LP', href: '#robinhood-lp' },
     { label: '推特监控', href: '#twitter' },
     { label: '关于', href: '#about' },
   ];

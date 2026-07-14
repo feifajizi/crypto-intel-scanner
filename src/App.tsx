@@ -3,6 +3,7 @@ import { Hero } from '@/components/Hero';
 import { CoinList } from '@/components/CoinList';
 import { TwitterMonitor } from '@/components/TwitterMonitor';
 import { TradFiFunding } from '@/components/TradFiFunding';
+import RobinhoodBoard from '@/features/robinhood/RobinhoodBoard';
 import { Footer } from '@/components/Footer';
 import { Toaster } from '@/components/ui/sonner';
 
@@ -28,6 +29,14 @@ function App() {
           <div className="absolute inset-0 bg-gradient-to-b from-slate-950 via-cyan-900/10 to-slate-950" />
           <div className="relative z-10 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
             <TradFiFunding />
+          </div>
+        </section>
+
+        {/* Robinhood Uniswap LP Section */}
+        <section id="robinhood-lp" className="py-20 relative">
+          <div className="absolute inset-0 bg-gradient-to-b from-slate-950 via-emerald-950/20 to-slate-950" />
+          <div className="relative z-10 max-w-[1500px] mx-auto px-4 sm:px-6 lg:px-8">
+            <RobinhoodBoard />
           </div>
         </section>
 
