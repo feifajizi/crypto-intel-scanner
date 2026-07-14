@@ -1,0 +1,378 @@
+.rh-board {
+  color-scheme: dark;
+  --bg: #0b0e14;
+  --panel: #121722;
+  --panel2: #171d2b;
+  --border: #243044;
+  --text: #e8eef9;
+  --muted: #8b98b0;
+  --accent: #fc72ff;
+  --accent2: #4c82fb;
+  --green: #3dd68c;
+  --red: #ff6b7a;
+  --warn: #f5a524;
+  --high: rgba(255, 107, 122, 0.12);
+  --med: rgba(245, 165, 36, 0.1);
+  font-family: "IBM Plex Sans", "SF Pro Text", ui-sans-serif, system-ui, sans-serif;
+  color: var(--text);
+  box-sizing: border-box;
+}
+
+.rh-board {
+  max-width: 1440px;
+  margin: 0 auto;
+  padding: 24px 20px 48px;
+}
+
+.rh-board *,
+.rh-board *::before,
+.rh-board *::after {
+  box-sizing: border-box;
+}
+
+.rh-board .rh-header {
+  display: flex;
+  justify-content: space-between;
+  gap: 16px;
+  align-items: flex-start;
+  margin-bottom: 18px;
+}
+
+.rh-board .rh-header h1 {
+  margin: 0 0 6px;
+  font-size: 1.45rem;
+  font-weight: 650;
+  letter-spacing: -0.02em;
+}
+
+.rh-board .sub {
+  margin: 0;
+  color: var(--muted);
+  font-size: 0.9rem;
+}
+
+.rh-board .header-actions {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.rh-board .live {
+  color: var(--muted);
+  font-size: 0.85rem;
+  font-variant-numeric: tabular-nums;
+}
+
+.rh-board .btn {
+  background: linear-gradient(135deg, #5b4bff, #fc72ff);
+  border: none;
+  color: white;
+  padding: 8px 14px;
+  border-radius: 8px;
+  font-weight: 600;
+  cursor: pointer;
+}
+
+.rh-board .btn:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+.rh-board .banner {
+  border-radius: 10px;
+  padding: 10px 14px;
+  margin-bottom: 12px;
+  font-size: 0.9rem;
+}
+
+.rh-board .banner.warn {
+  background: rgba(245, 165, 36, 0.12);
+  border: 1px solid rgba(245, 165, 36, 0.35);
+  color: #ffd48a;
+}
+
+.rh-board .banner.err {
+  background: rgba(255, 107, 122, 0.12);
+  border: 1px solid rgba(255, 107, 122, 0.35);
+  color: #ffb3bb;
+}
+
+.rh-board .cards {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 12px;
+  margin-bottom: 16px;
+}
+
+@media (max-width: 960px) {
+  .rh-board .cards {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+
+.rh-board .card {
+  background: linear-gradient(180deg, var(--panel2), var(--panel));
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  padding: 14px 16px;
+}
+
+.rh-board .card-label {
+  color: var(--muted);
+  font-size: 0.78rem;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+}
+
+.rh-board .card-value {
+  font-size: 1.35rem;
+  font-weight: 700;
+  margin: 6px 0 4px;
+  font-variant-numeric: tabular-nums;
+}
+
+.rh-board .card-hint {
+  color: var(--muted);
+  font-size: 0.8rem;
+}
+
+.rh-board .toolbar {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  margin-bottom: 10px;
+}
+
+.rh-board .tabs {
+  display: flex;
+  gap: 8px;
+}
+
+.rh-board .tab {
+  background: var(--panel);
+  border: 1px solid var(--border);
+  color: var(--muted);
+  padding: 8px 14px;
+  border-radius: 999px;
+  cursor: pointer;
+  font-weight: 600;
+}
+
+.rh-board .tab.on {
+  color: white;
+  border-color: transparent;
+  background: linear-gradient(135deg, #4c82fb, #7a5cff);
+}
+
+.rh-board .filters {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  align-items: center;
+}
+
+.rh-board .input,
+.rh-board .select {
+  background: var(--panel);
+  border: 1px solid var(--border);
+  color: var(--text);
+  border-radius: 8px;
+  padding: 8px 10px;
+  font-size: 0.9rem;
+}
+
+.rh-board .input {
+  min-width: 240px;
+  flex: 1;
+}
+
+.rh-board .check {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  color: var(--muted);
+  font-size: 0.85rem;
+  user-select: none;
+}
+
+.rh-board .disclaimer {
+  color: var(--muted);
+  font-size: 0.8rem;
+  margin: 0 0 12px;
+  line-height: 1.45;
+}
+
+.rh-board .disclaimer code {
+  background: var(--panel2);
+  padding: 1px 5px;
+  border-radius: 4px;
+  color: #c9d4ea;
+}
+
+.rh-board .table-wrap {
+  overflow: auto;
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  background: rgba(12, 16, 24, 0.85);
+}
+
+.rh-board table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 0.82rem;
+}
+
+.rh-board th,
+.rh-board td {
+  padding: 8px 10px;
+  border-bottom: 1px solid var(--border);
+  white-space: nowrap;
+  text-align: left;
+}
+
+.rh-board th {
+  position: sticky;
+  top: 0;
+  background: #141a27;
+  color: var(--muted);
+  font-weight: 600;
+  font-size: 0.78rem;
+  text-transform: uppercase;
+  letter-spacing: 0.03em;
+  z-index: 1;
+}
+
+.rh-board th.sortable {
+  cursor: pointer;
+  user-select: none;
+}
+
+.rh-board th.sortable:hover {
+  color: var(--text);
+}
+
+.rh-board td.num,
+.rh-board th.num {
+  text-align: right;
+}
+
+.rh-board .mono {
+  font-variant-numeric: tabular-nums;
+  font-family: "IBM Plex Mono", ui-monospace, SFMono-Regular, Menlo, monospace;
+  font-size: 0.84rem;
+}
+
+.rh-board .pair strong {
+  font-weight: 650;
+}
+
+.rh-board .badge-new {
+  display: inline-block;
+  margin-left: 6px;
+  padding: 1px 6px;
+  border-radius: 999px;
+  font-size: 0.65rem;
+  font-weight: 800;
+  letter-spacing: 0.04em;
+  vertical-align: middle;
+  background: rgba(61, 214, 140, 0.18);
+  color: #6dffb0;
+  border: 1px solid rgba(61, 214, 140, 0.35);
+}
+
+.rh-board .muted {
+  color: var(--muted);
+  font-size: 0.8rem;
+}
+
+.rh-board .tag {
+  display: inline-block;
+  padding: 2px 7px;
+  border-radius: 999px;
+  font-size: 0.72rem;
+  font-weight: 700;
+  letter-spacing: 0.03em;
+}
+
+.rh-board .tag.v2 {
+  background: rgba(61, 214, 140, 0.15);
+  color: #6dffb0;
+}
+
+.rh-board .tag.v3 {
+  background: rgba(76, 130, 251, 0.18);
+  color: #9cbcff;
+}
+
+.rh-board .tag.v4 {
+  background: rgba(252, 114, 255, 0.15);
+  color: #f7a8ff;
+}
+
+.rh-board .up {
+  color: var(--green);
+}
+
+.rh-board .down {
+  color: var(--red);
+}
+
+.rh-board .row-high {
+  background: var(--high);
+}
+
+.rh-board .row-med {
+  background: var(--med);
+}
+
+.rh-board .risk {
+  font-size: 0.75rem;
+  font-weight: 700;
+  text-transform: uppercase;
+}
+
+.rh-board .risk.high {
+  color: var(--red);
+}
+
+.rh-board .risk.med {
+  color: var(--warn);
+}
+
+.rh-board .risk.ok {
+  color: var(--muted);
+}
+
+.rh-board a {
+  color: #9cbcff;
+  text-decoration: none;
+}
+
+.rh-board a:hover {
+  text-decoration: underline;
+}
+
+.rh-board .link-btn {
+  background: transparent;
+  border: 0;
+  color: #9cbcff;
+  cursor: pointer;
+  font: inherit;
+  padding: 0;
+}
+
+.rh-board .link-btn:hover {
+  text-decoration: underline;
+}
+
+.rh-board .empty {
+  padding: 40px;
+  text-align: center;
+  color: var(--muted);
+  border: 1px dashed var(--border);
+  border-radius: 12px;
+}
+
+.rh-board tr:hover td {
+  background: rgba(255, 255, 255, 0.02);
+}
